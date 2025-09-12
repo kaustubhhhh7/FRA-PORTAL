@@ -1,73 +1,115 @@
-# Welcome to your Lovable project
+# FRA Vista Dashboard
 
-## Project info
+A comprehensive Forest Rights Act (FRA) dashboard for tracking and visualizing forest rights claims across India.
 
-**URL**: https://lovable.dev/projects/14e5fb79-9e00-4dcb-b9ce-9ab65e863321
+## 🌟 Features
 
-## How can I edit this code?
+- **Interactive Map**: Real-time visualization of forest rights claims across Indian states
+- **State Highlighting**: Special highlighting for key states (Madhya Pradesh, Odisha, Telangana, Tripura)
+- **Advanced Filtering**: Filter by state, district, and claim status
+- **Data Visualization**: Charts and statistics for claim distribution and trends
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Modern UI**: Built with shadcn/ui components and Tailwind CSS
 
-There are several ways of editing your application.
+## 🚀 Live Demo
 
-**Use Lovable**
+[Deploy to Netlify](https://app.netlify.com/start/deploy?repository=https://github.com/Victorraj020/FRA)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/14e5fb79-9e00-4dcb-b9ce-9ab65e863321) and start prompting.
+## 🛠️ Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+- **React 18** - Modern UI framework
+- **TypeScript** - Type-safe JavaScript
+- **Vite** - Fast build tool and dev server
+- **Tailwind CSS** - Utility-first CSS framework
+- **Leaflet** - Interactive maps
+- **Recharts** - Data visualization
+- **Radix UI** - Accessible component library
+- **shadcn/ui** - Beautiful UI components
 
-**Use your preferred IDE**
+## 📦 Installation & Setup
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```bash
+# Clone the repository
+git clone https://github.com/Victorraj020/FRA.git
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# Navigate to project directory
+cd FRA
 
-Follow these steps:
+# Install dependencies
+npm install
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## 🚀 Deployment
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Netlify (Recommended)
 
-**Use GitHub Codespaces**
+1. **One-Click Deploy**: [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/Victorraj020/FRA)
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+2. **Manual Deploy**:
+   ```bash
+   # Build the project
+   npm run build
+   
+   # Deploy the 'dist' folder to Netlify
+   ```
 
-## What technologies are used for this project?
+### Other Platforms
 
-This project is built with:
+- **Vercel**: Connect your GitHub repository
+- **GitHub Pages**: Use GitHub Actions for deployment
+- **AWS S3**: Upload the `dist` folder to S3
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 📁 Project Structure
 
-## How can I deploy this project?
+```
+src/
+├── components/          # React components
+│   ├── ui/             # shadcn/ui components
+│   ├── ControlPanel.tsx # Filter and control panel
+│   ├── MapView.tsx     # Interactive map component
+│   └── Header.tsx      # Application header
+├── data/               # Mock data and types
+├── pages/              # Application pages
+└── lib/                # Utility functions
+```
 
-Simply open [Lovable](https://lovable.dev/projects/14e5fb79-9e00-4dcb-b9ce-9ab65e863321) and click on Share -> Publish.
+## 🎯 Key Features
 
-## Can I connect a custom domain to my Lovable project?
+### State Highlighting
+The dashboard highlights four key states in red:
+- Madhya Pradesh
+- Odisha  
+- Telangana
+- Tripura
 
-Yes, you can!
+### Interactive Map
+- Clickable markers for each village
+- Status-based color coding
+- Detailed popups with village information
+- Real-time filtering
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Data Visualization
+- Pie charts for claim distribution
+- Bar charts for monthly trends
+- Statistics cards for key metrics
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with [shadcn/ui](https://ui.shadcn.com/)
+- Maps powered by [Leaflet](https://leafletjs.com/)
+- Charts by [Recharts](https://recharts.org/)
