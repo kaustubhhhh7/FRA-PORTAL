@@ -1,0 +1,228 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Leaflet Map Styles */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  z-index: 1;
+}
+
+/* Leaflet Map Styles */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  z-index: 1;
+}
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Government/Forest Theme - Professional Blues & Greens */
+    --background: 210 20% 98%;
+    --foreground: 210 15% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 15% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 15% 12%;
+
+    /* Primary: Government Blue */
+    --primary: 214 84% 45%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 214 84% 40%;
+    --primary-light: 214 84% 95%;
+
+    /* Secondary: Forest Green */
+    --secondary: 142 69% 45%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-hover: 142 69% 40%;
+    --secondary-light: 142 69% 95%;
+
+    /* Muted: Neutral Grays */
+    --muted: 210 20% 96%;
+    --muted-foreground: 210 10% 45%;
+
+    /* Accent: Complementary Green */
+    --accent: 155 65% 48%;
+    --accent-foreground: 0 0% 100%;
+    --accent-light: 155 65% 95%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 20% 90%;
+    --input: 210 20% 95%;
+    --ring: 214 84% 45%;
+
+    /* Dashboard Specific Colors */
+    --dashboard-nav: 214 95% 25%;
+    --dashboard-nav-foreground: 0 0% 100%;
+    --dashboard-sidebar: 210 25% 98%;
+    --dashboard-panel: 0 0% 100%;
+    --map-control: 0 0% 100%;
+    --status-approved: 120 60% 50%;
+    --status-pending: 45 100% 55%;
+    --status-rejected: 0 75% 55%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(214 84% 45%), hsl(214 84% 55%));
+    --gradient-forest: linear-gradient(135deg, hsl(142 69% 45%), hsl(155 65% 48%));
+    --gradient-hero: linear-gradient(135deg, hsl(214 84% 45%), hsl(155 65% 48%));
+
+    /* Shadows */
+    --shadow-card: 0 4px 6px -1px hsl(210 20% 0% / 0.1), 0 2px 4px -2px hsl(210 20% 0% / 0.1);
+    --shadow-panel: 0 10px 15px -3px hsl(210 20% 0% / 0.1), 0 4px 6px -4px hsl(210 20% 0% / 0.1);
+    --shadow-elevated: 0 20px 25px -5px hsl(210 20% 0% / 0.1), 0 8px 10px -6px hsl(210 20% 0% / 0.1);
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 210 25% 8%;
+    --foreground: 210 15% 95%;
+
+    --card: 210 25% 10%;
+    --card-foreground: 210 15% 95%;
+
+    --popover: 210 25% 10%;
+    --popover-foreground: 210 15% 95%;
+
+    --primary: 214 84% 55%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 214 84% 50%;
+    --primary-light: 214 84% 15%;
+
+    --secondary: 142 69% 55%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-hover: 142 69% 50%;
+    --secondary-light: 142 69% 15%;
+
+    --muted: 210 25% 15%;
+    --muted-foreground: 210 15% 65%;
+
+    --accent: 155 65% 58%;
+    --accent-foreground: 0 0% 100%;
+    --accent-light: 155 65% 15%;
+
+    --destructive: 0 84% 65%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 25% 20%;
+    --input: 210 25% 15%;
+    --ring: 214 84% 55%;
+
+    --dashboard-nav: 214 95% 20%;
+    --dashboard-nav-foreground: 0 0% 100%;
+    --dashboard-sidebar: 210 25% 12%;
+    --dashboard-panel: 210 25% 10%;
+    --map-control: 210 25% 10%;
+    --status-approved: 120 60% 60%;
+    --status-pending: 45 100% 65%;
+    --status-rejected: 0 75% 65%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(214 84% 55%), hsl(214 84% 65%));
+    --gradient-forest: linear-gradient(135deg, hsl(142 69% 55%), hsl(155 65% 58%));
+    --gradient-hero: linear-gradient(135deg, hsl(214 84% 55%), hsl(155 65% 58%));
+
+    --shadow-card: 0 4px 6px -1px hsl(210 25% 0% / 0.3), 0 2px 4px -2px hsl(210 25% 0% / 0.2);
+    --shadow-panel: 0 10px 15px -3px hsl(210 25% 0% / 0.3), 0 4px 6px -4px hsl(210 25% 0% / 0.2);
+    --shadow-elevated: 0 20px 25px -5px hsl(210 25% 0% / 0.3), 0 8px 10px -6px hsl(210 25% 0% / 0.2);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Mobile-specific improvements */
+@layer utilities {
+  /* Ensure touch targets are at least 44px */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Mobile-friendly scrolling */
+  .mobile-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  
+  /* Prevent zoom on input focus on iOS */
+  @media screen and (max-width: 768px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    select {
+      font-size: 16px;
+    }
+  }
+  
+  /* Mobile drawer improvements */
+  .mobile-drawer {
+    @apply fixed inset-y-0 right-0 z-50 w-full bg-background shadow-elevated transform transition-transform duration-300 ease-in-out;
+  }
+  
+  /* Mobile control panel */
+  .mobile-control-panel {
+    @apply fixed right-0 top-0 h-full w-80 max-w-[85vw] bg-dashboard-sidebar transform transition-transform duration-300 ease-in-out;
+  }
+  
+  /* Text visibility improvements */
+  .text-high-contrast {
+    color: hsl(var(--foreground));
+    font-weight: 500;
+  }
+  
+  /* Mobile navigation text improvements */
+  .mobile-nav-text {
+    color: white;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Active mobile nav text */
+  .mobile-nav-active {
+    color: hsl(var(--dashboard-nav));
+    font-weight: 600;
+  }
+}
