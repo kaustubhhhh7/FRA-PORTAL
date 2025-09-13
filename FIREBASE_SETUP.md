@@ -1,61 +1,70 @@
-# Firebase Authentication Setup
+# Firebase Setup Guide for FRA Portal
 
-This project includes Firebase authentication with login and signup functionality. Follow these steps to set up Firebase:
+## 🔥 Quick Setup Steps
 
-## 1. Create a Firebase Project
-
+### 1. Create Firebase Project
 1. Go to [Firebase Console](https://console.firebase.google.com/)
-2. Click "Create a project" or "Add project"
-3. Enter your project name and follow the setup wizard
-4. Enable Google Analytics if desired
+2. Click "Add project"
+3. Name: `FRA-Portal`
+4. Enable Google Analytics (optional)
+5. Create project
 
-## 2. Enable Authentication
+### 2. Enable Google Authentication
+1. Go to Authentication → Sign-in method
+2. Click "Google"
+3. Toggle "Enable"
+4. Add your Netlify domain to authorized domains
+5. Save
 
-1. In your Firebase project, go to "Authentication" in the left sidebar
-2. Click "Get started"
-3. Go to the "Sign-in method" tab
-4. Enable "Email/Password" authentication
+### 3. Get Configuration
+1. Go to Project Settings (gear icon)
+2. Scroll to "Your apps"
+3. Click Web icon (</>)
+4. Register app: `FRA-Portal-Web`
+5. Copy the config object
 
-## 3. Get Firebase Configuration
+### 4. Set Environment Variables in Netlify
+Go to Netlify Dashboard → Site Settings → Environment Variables
 
-1. In your Firebase project, go to "Project settings" (gear icon)
-2. Scroll down to "Your apps" section
-3. Click "Add app" and select the web icon (</>)
-4. Register your app with a nickname
-5. Copy the Firebase configuration object
-
-## 4. Set Environment Variables
-
-Create a `.env` file in the root directory with your Firebase configuration:
-
-```env
+Add these variables:
+```
 VITE_FIREBASE_API_KEY=your-api-key
 VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=your-project-id
 VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
+VITE_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
 VITE_FIREBASE_APP_ID=your-app-id
 ```
 
-Replace the values with your actual Firebase configuration.
+### 5. Add Authorized Domains
+In Firebase Console → Authentication → Settings → Authorized domains:
+- Add your Netlify URL: `your-site-name.netlify.app`
+- Add `localhost` for development
 
-## 5. Test the Application
+### 6. Redeploy
+After setting environment variables, trigger a new deployment in Netlify.
 
-1. Run `npm run dev` to start the development server
-2. Navigate to `http://localhost:5173`
-3. You should be redirected to the login page
-4. Create a new account or sign in with existing credentials
+## 🚨 Common Issues
 
-## Features
+### Google Sign-in Fails
+- Check if Google provider is enabled
+- Verify authorized domains include your Netlify URL
+- Ensure environment variables are set correctly
 
-- **Login Page**: Email/password authentication
-- **Sign Up Page**: Create new accounts with email/password
-- **Protected Routes**: Main dashboard is protected and requires authentication
-- **User Display**: Shows logged-in user's name/email
-- **Logout**: Sign out functionality
+### Environment Variables Not Working
+- Make sure variable names start with `VITE_`
+- Redeploy after adding variables
+- Check Netlify build logs for errors
 
-## Security Notes
+## 🔧 Testing
 
-- Never commit your `.env` file to version control
-- The `.env` file is already included in `.gitignore`
-- Firebase handles password hashing and security automatically
+1. **Local Testing**: Use `.env.local` file with your Firebase config
+2. **Production Testing**: Verify environment variables in Netlify
+3. **Console Logs**: Check browser console for Firebase errors
+
+## 📞 Support
+
+If you need help:
+1. Check Firebase Console for error messages
+2. Check Netlify build logs
+3. Check browser console for JavaScript errors

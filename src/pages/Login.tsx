@@ -45,8 +45,20 @@ const Login: React.FC = () => {
       await loginWithGoogle();
       navigate('/');
     } catch (error: any) {
-      setError('Failed to sign in with Google. Please try again.');
       console.error('Google login error:', error);
+      
+      // Provide more specific error messages
+      if (error.code === 'auth/popup-closed-by-user') {
+        setError('Sign-in was cancelled. Please try again.');
+      } else if (error.code === 'auth/popup-blocked') {
+        setError('Popup was blocked by your browser. Please allow popups and try again.');
+      } else if (error.code === 'auth/configuration-not-found') {
+        setError('Firebase configuration not found. Please contact support.');
+      } else if (error.message?.includes('API key')) {
+        setError('Firebase API key is invalid. Please contact support.');
+      } else {
+        setError('Failed to sign in with Google. Please check your internet connection and try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -146,6 +158,14 @@ const Login: React.FC = () => {
                   Sign up
                 </Link>
               </p>
+              
+              {/* Firebase Setup Notice */}
+              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                <p className="text-xs text-blue-700">
+                  <strong>Note:</strong> If Google sign-in isn't working, Firebase needs to be configured. 
+                  Check the setup guide in the repository.
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
