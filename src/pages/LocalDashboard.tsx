@@ -29,7 +29,7 @@ import { Village, Alert as AlertType, mockAlerts } from '@/data/mockData';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const LocalDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState('map');
   const [selectedVillage, setSelectedVillage] = useState<Village | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isControlPanelOpen, setIsControlPanelOpen] = useState(false);
@@ -196,7 +196,7 @@ const LocalDashboard: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="border-2 border-white/40 text-white hover:bg-white/20 hover:border-white/60 px-3 py-2 rounded-lg"
+                className="border-2 border-white/40 text-white hover:bg-white/20 hover:border-white/60 bg-white/10 px-3 py-2 rounded-lg transition-all duration-200"
               >
                 {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
               </Button>
@@ -250,8 +250,8 @@ const LocalDashboard: React.FC = () => {
                         }}
                         className={`flex items-center space-x-2 font-semibold px-3 py-2 rounded-lg transition-all duration-200 ${
                           activeTab === tab.id 
-                            ? 'bg-blue-600 text-white shadow-lg border-2 border-blue-500 hover:bg-blue-700' 
-                            : 'border-2 border-gray-300 text-gray-800 bg-white hover:bg-gray-100 hover:border-gray-400'
+                            ? 'bg-white text-black shadow-lg border-2 border-white hover:bg-gray-100' 
+                            : 'border-2 border-white/40 text-white bg-white/10 hover:bg-white/20 hover:border-white/60'
                         }`}
                       >
                         <Icon className="w-4 h-4" />
@@ -262,16 +262,16 @@ const LocalDashboard: React.FC = () => {
                 </div>
 
                 {/* Mobile User Info and Logout */}
-                <div className="flex flex-col space-y-2 pt-2 border-t border-gray-300">
+                <div className="flex flex-col space-y-2 pt-2 border-t border-white/20">
                   <div className="flex items-center space-x-2">
-                    <Badge className="bg-blue-100 text-blue-800 border border-blue-200">
+                    <Badge className="bg-white text-black border border-white">
                       <Users className="w-3 h-3 mr-1" />
                       Local User
                     </Badge>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <User className="h-4 w-4 text-gray-700" />
-                    <span className="text-sm text-gray-700 font-medium">
+                    <User className="h-4 w-4 text-white" />
+                    <span className="text-sm text-white font-medium">
                       {currentUser?.displayName || currentUser?.email}
                     </span>
                   </div>
@@ -279,7 +279,7 @@ const LocalDashboard: React.FC = () => {
                     variant="outline" 
                     size="sm" 
                     onClick={handleLogout}
-                    className="flex items-center space-x-1 border-2 border-red-300 text-red-700 bg-white hover:bg-red-50 hover:border-red-400 px-3 py-2 rounded-lg font-medium transition-all duration-200"
+                    className="flex items-center space-x-1 border-2 border-white/40 text-white bg-white/10 hover:bg-white/20 hover:border-white/60 px-3 py-2 rounded-lg font-medium transition-all duration-200"
                   >
                     <LogOut className="h-4 w-4" />
                     <span>Logout</span>
@@ -298,7 +298,7 @@ const LocalDashboard: React.FC = () => {
           <div className="fixed top-20 left-4 z-50">
             <Button
               onClick={() => setIsControlPanelOpen(!isControlPanelOpen)}
-              className="bg-white text-black shadow-lg border-2 border-gray-300 hover:bg-gray-100"
+              className="bg-white text-black shadow-lg border-2 border-white hover:bg-gray-100 transition-all duration-200"
             >
               <Menu className="h-4 w-4 mr-2" />
               Filters
