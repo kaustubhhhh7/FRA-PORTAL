@@ -39,8 +39,8 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2 sm:space-x-4">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-accent to-secondary rounded-lg flex items-center justify-center">
-                <MapPin className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-lg flex items-center justify-center border-2 border-white">
+                <MapPin className="w-4 h-4 sm:w-6 sm:h-6 text-black" />
               </div>
               <div>
                 <h1 className="text-lg sm:text-2xl font-bold">FRA Portal</h1>

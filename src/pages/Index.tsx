@@ -5,6 +5,9 @@ import ControlPanel from '@/components/ControlPanel';
 import DetailsDrawer from '@/components/DetailsDrawer';
 import { Village } from '@/data/mockData';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { LogOut, User } from 'lucide-react';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -17,6 +20,7 @@ const Index = () => {
     status: 'all-status'
   });
   const isMobile = useIsMobile();
+  const { currentUser, logout } = useAuth();
 
   const handleVillageSelect = (village: Village) => {
     setSelectedVillage(village);
@@ -32,6 +36,14 @@ const Index = () => {
     setIsControlPanelOpen(false);
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Failed to log out:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col h-screen">
       <Header 
@@ -40,6 +52,25 @@ const Index = () => {
         onToggleControlPanel={() => setIsControlPanelOpen(!isControlPanelOpen)}
         isControlPanelOpen={isControlPanelOpen}
       />
+      
+      {/* User Info and Logout */}
+      <div className="bg-white border-b px-4 py-2 flex justify-between items-center">
+        <div className="flex items-center space-x-2">
+          <User className="h-4 w-4 text-gray-600" />
+          <span className="text-sm text-gray-600">
+            Welcome, {currentUser?.displayName || currentUser?.email}
+          </span>
+        </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleLogout}
+          className="flex items-center space-x-1"
+        >
+          <LogOut className="h-4 w-4" />
+          <span>Logout</span>
+        </Button>
+      </div>
       
       <div className="flex flex-1 h-[calc(100vh-80px)] relative" style={{ minHeight: '500px', height: 'calc(100vh - 80px)' }}>
         {/* Main Content Area */}

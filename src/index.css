@@ -24,141 +24,125 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Government/Forest Theme - Professional Blues & Greens */
-    --background: 210 20% 98%;
-    --foreground: 210 15% 12%;
+    /* Enhanced Black and White Theme with Better Contrast */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 210 15% 12%;
+    --card-foreground: 0 0% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 15% 12%;
+    --popover-foreground: 0 0% 15%;
 
-    /* Primary: Government Blue */
-    --primary: 214 84% 45%;
+    /* Primary: High Contrast Black */
+    --primary: 0 0% 8%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 214 84% 40%;
-    --primary-light: 214 84% 95%;
+    --primary-hover: 0 0% 15%;
+    --primary-light: 0 0% 96%;
 
-    /* Secondary: Forest Green */
-    --secondary: 142 69% 45%;
+    /* Secondary: Medium Gray with Better Contrast */
+    --secondary: 0 0% 25%;
     --secondary-foreground: 0 0% 100%;
-    --secondary-hover: 142 69% 40%;
-    --secondary-light: 142 69% 95%;
+    --secondary-hover: 0 0% 35%;
+    --secondary-light: 0 0% 96%;
 
-    /* Muted: Neutral Grays */
-    --muted: 210 20% 96%;
-    --muted-foreground: 210 10% 45%;
+    /* Muted: Better Contrast */
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 35%;
 
-    /* Accent: Complementary Green */
-    --accent: 155 65% 48%;
+    /* Accent: Dark Gray with Better Contrast */
+    --accent: 0 0% 20%;
     --accent-foreground: 0 0% 100%;
-    --accent-light: 155 65% 95%;
+    --accent-light: 0 0% 96%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 75% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 90%;
-    --input: 210 20% 95%;
-    --ring: 214 84% 45%;
+    --border: 0 0% 85%;
+    --input: 0 0% 98%;
+    --ring: 0 0% 8%;
 
     /* Dashboard Specific Colors */
-    --dashboard-nav: 214 95% 25%;
+    --dashboard-nav: 0 0% 8%;
     --dashboard-nav-foreground: 0 0% 100%;
-    --dashboard-sidebar: 210 25% 98%;
+    --dashboard-sidebar: 0 0% 98%;
     --dashboard-panel: 0 0% 100%;
     --map-control: 0 0% 100%;
-    --status-approved: 120 60% 50%;
-    --status-pending: 45 100% 55%;
-    --status-rejected: 0 75% 55%;
-
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(214 84% 45%), hsl(214 84% 55%));
-    --gradient-forest: linear-gradient(135deg, hsl(142 69% 45%), hsl(155 65% 48%));
-    --gradient-hero: linear-gradient(135deg, hsl(214 84% 45%), hsl(155 65% 48%));
+    --status-approved: 120 60% 45%;
+    --status-pending: 45 100% 50%;
+    --status-rejected: 0 75% 50%;
 
     /* Shadows */
-    --shadow-card: 0 4px 6px -1px hsl(210 20% 0% / 0.1), 0 2px 4px -2px hsl(210 20% 0% / 0.1);
-    --shadow-panel: 0 10px 15px -3px hsl(210 20% 0% / 0.1), 0 4px 6px -4px hsl(210 20% 0% / 0.1);
-    --shadow-elevated: 0 20px 25px -5px hsl(210 20% 0% / 0.1), 0 8px 10px -6px hsl(210 20% 0% / 0.1);
+    --shadow-card: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -2px hsl(0 0% 0% / 0.1);
+    --shadow-panel: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -4px hsl(0 0% 0% / 0.1);
+    --shadow-elevated: 0 20px 25px -5px hsl(0 0% 0% / 0.1), 0 8px 10px -6px hsl(0 0% 0% / 0.1);
 
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-foreground: 0 0% 0%;
+    --sidebar-primary: 0 0% 0%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 95%;
+    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 0 0% 0%;
   }
 
   .dark {
-    --background: 210 25% 8%;
-    --foreground: 210 15% 95%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
 
-    --card: 210 25% 10%;
-    --card-foreground: 210 15% 95%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 210 25% 10%;
-    --popover-foreground: 210 15% 95%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 214 84% 55%;
-    --primary-foreground: 0 0% 100%;
-    --primary-hover: 214 84% 50%;
-    --primary-light: 214 84% 15%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+    --primary-hover: 0 0% 80%;
+    --primary-light: 0 0% 20%;
 
-    --secondary: 142 69% 55%;
+    --secondary: 0 0% 50%;
     --secondary-foreground: 0 0% 100%;
-    --secondary-hover: 142 69% 50%;
-    --secondary-light: 142 69% 15%;
+    --secondary-hover: 0 0% 60%;
+    --secondary-light: 0 0% 20%;
 
-    --muted: 210 25% 15%;
-    --muted-foreground: 210 15% 65%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 155 65% 58%;
-    --accent-foreground: 0 0% 100%;
-    --accent-light: 155 65% 15%;
+    --accent: 0 0% 70%;
+    --accent-foreground: 0 0% 0%;
+    --accent-light: 0 0% 20%;
 
-    --destructive: 0 84% 65%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 0% 100%;
+    --destructive-foreground: 0 0% 0%;
 
-    --border: 210 25% 20%;
-    --input: 210 25% 15%;
-    --ring: 214 84% 55%;
+    --border: 0 0% 20%;
+    --input: 0 0% 15%;
+    --ring: 0 0% 100%;
 
-    --dashboard-nav: 214 95% 20%;
+    --dashboard-nav: 0 0% 0%;
     --dashboard-nav-foreground: 0 0% 100%;
-    --dashboard-sidebar: 210 25% 12%;
-    --dashboard-panel: 210 25% 10%;
-    --map-control: 210 25% 10%;
-    --status-approved: 120 60% 60%;
-    --status-pending: 45 100% 65%;
-    --status-rejected: 0 75% 65%;
+    --dashboard-sidebar: 0 0% 10%;
+    --dashboard-panel: 0 0% 10%;
+    --map-control: 0 0% 10%;
+    --status-approved: 0 0% 100%;
+    --status-pending: 0 0% 50%;
+    --status-rejected: 0 0% 100%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(214 84% 55%), hsl(214 84% 65%));
-    --gradient-forest: linear-gradient(135deg, hsl(142 69% 55%), hsl(155 65% 58%));
-    --gradient-hero: linear-gradient(135deg, hsl(214 84% 55%), hsl(155 65% 58%));
-
-    --shadow-card: 0 4px 6px -1px hsl(210 25% 0% / 0.3), 0 2px 4px -2px hsl(210 25% 0% / 0.2);
-    --shadow-panel: 0 10px 15px -3px hsl(210 25% 0% / 0.3), 0 4px 6px -4px hsl(210 25% 0% / 0.2);
-    --shadow-elevated: 0 20px 25px -5px hsl(210 25% 0% / 0.3), 0 8px 10px -6px hsl(210 25% 0% / 0.2);
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --shadow-card: 0 4px 6px -1px hsl(0 0% 0% / 0.3), 0 2px 4px -2px hsl(0 0% 0% / 0.2);
+    --shadow-panel: 0 10px 15px -3px hsl(0 0% 0% / 0.3), 0 4px 6px -4px hsl(0 0% 0% / 0.2);
+    --shadow-elevated: 0 20px 25px -5px hsl(0 0% 0% / 0.3), 0 8px 10px -6px hsl(0 0% 0% / 0.2);
+    --sidebar-background: 0 0% 10%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 0 0% 20%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 0 0% 100%;
   }
 }
 
@@ -224,5 +208,94 @@ All colors MUST be HSL.
   .mobile-nav-active {
     color: hsl(var(--dashboard-nav));
     font-weight: 600;
+  }
+
+  /* Enhanced Button Styles */
+  .btn-primary {
+    @apply bg-black text-white border-2 border-black font-semibold px-6 py-3 rounded-lg;
+    @apply hover:bg-gray-800 hover:border-gray-800 transition-all duration-200;
+    @apply focus:ring-4 focus:ring-gray-300 focus:outline-none;
+    @apply shadow-lg hover:shadow-xl;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-black border-2 border-black font-semibold px-6 py-3 rounded-lg;
+    @apply hover:bg-gray-100 hover:border-gray-800 transition-all duration-200;
+    @apply focus:ring-4 focus:ring-gray-300 focus:outline-none;
+    @apply shadow-md hover:shadow-lg;
+  }
+
+  .btn-outline {
+    @apply bg-transparent text-black border-2 border-gray-400 font-semibold px-6 py-3 rounded-lg;
+    @apply hover:bg-gray-100 hover:border-gray-600 transition-all duration-200;
+    @apply focus:ring-4 focus:ring-gray-300 focus:outline-none;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent text-gray-600 font-medium px-4 py-2 rounded-lg;
+    @apply hover:bg-gray-100 hover:text-black transition-all duration-200;
+    @apply focus:ring-2 focus:ring-gray-300 focus:outline-none;
+  }
+
+  /* Interactive Elements */
+  .clickable {
+    @apply cursor-pointer transition-all duration-200;
+    @apply hover:scale-105 hover:shadow-md;
+  }
+
+  .card-interactive {
+    @apply border-2 border-gray-200 hover:border-gray-400;
+    @apply transition-all duration-200 hover:shadow-lg;
+    @apply cursor-pointer;
+  }
+
+  /* Status Indicators */
+  .status-approved {
+    @apply bg-green-100 text-green-800 border-green-300;
+  }
+
+  .status-pending {
+    @apply bg-yellow-100 text-yellow-800 border-yellow-300;
+  }
+
+  .status-rejected {
+    @apply bg-red-100 text-red-800 border-red-300;
+  }
+
+  /* Priority Indicators */
+  .priority-high {
+    @apply bg-red-100 text-red-800 border-red-300 font-semibold;
+  }
+
+  .priority-medium {
+    @apply bg-yellow-100 text-yellow-800 border-yellow-300 font-semibold;
+  }
+
+  .priority-low {
+    @apply bg-green-100 text-green-800 border-green-300 font-semibold;
+  }
+
+  /* Enhanced Form Elements */
+  .form-input {
+    @apply border-2 border-gray-300 rounded-lg px-4 py-3;
+    @apply focus:border-black focus:ring-4 focus:ring-gray-200 focus:outline-none;
+    @apply transition-all duration-200;
+  }
+
+  .form-select {
+    @apply border-2 border-gray-300 rounded-lg px-4 py-3;
+    @apply focus:border-black focus:ring-4 focus:ring-gray-200 focus:outline-none;
+    @apply transition-all duration-200;
+  }
+
+  /* Mobile Responsive Improvements */
+  @media (max-width: 768px) {
+    .btn-primary, .btn-secondary, .btn-outline {
+      @apply px-4 py-2 text-sm;
+    }
+    
+    .card-interactive {
+      @apply border border-gray-200;
+    }
   }
 }

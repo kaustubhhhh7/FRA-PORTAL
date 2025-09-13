@@ -12,6 +12,24 @@ export interface Village {
   lastUpdated: string;
 }
 
+export interface Alert {
+  id: string;
+  title: string;
+  message: string;
+  type: 'scheme' | 'announcement' | 'warning' | 'update';
+  priority: 'high' | 'medium' | 'low';
+  coordinates: [number, number];
+  village?: string;
+  state: string;
+  district: string;
+  createdBy: string;
+  createdAt: string;
+  expiresAt?: string;
+  isActive: boolean;
+  targetAudience: 'all' | 'local' | 'government';
+  attachments?: string[];
+}
+
 export interface State {
   name: string;
   districts: string[];
@@ -200,5 +218,73 @@ export const mockRecommendations = [
     priority: 'Low',
     villages: 67,
     estimatedImpact: '68%'
+  }
+];
+
+export const mockAlerts: Alert[] = [
+  {
+    id: '1',
+    title: 'New Forest Rights Scheme Launch',
+    message: 'A new forest rights scheme has been launched for the region. All eligible communities can apply for additional land rights and conservation benefits. Contact your local forest department for more information.',
+    type: 'scheme',
+    priority: 'high',
+    coordinates: [22.5957, 80.3689],
+    village: 'Kumhargaon',
+    state: 'Madhya Pradesh',
+    district: 'Mandla',
+    createdBy: 'Forest Department MP',
+    createdAt: '2024-01-20T10:00:00Z',
+    expiresAt: '2024-03-20T10:00:00Z',
+    isActive: true,
+    targetAudience: 'local',
+    attachments: ['scheme-guidelines.pdf', 'application-form.pdf']
+  },
+  {
+    id: '2',
+    title: 'Important Update: Document Verification',
+    message: 'All pending forest rights applications in Kalahandi district will undergo verification next week. Please ensure all required documents are submitted by January 25th, 2024.',
+    type: 'update',
+    priority: 'high',
+    coordinates: [20.0484, 83.1648],
+    village: 'Kendupali',
+    state: 'Odisha',
+    district: 'Kalahandi',
+    createdBy: 'District Forest Officer',
+    createdAt: '2024-01-18T14:30:00Z',
+    expiresAt: '2024-01-25T18:00:00Z',
+    isActive: true,
+    targetAudience: 'local'
+  },
+  {
+    id: '3',
+    title: 'Conservation Workshop Announcement',
+    message: 'A workshop on sustainable forest management will be conducted on February 5th, 2024, at the community center. All forest rights holders are invited to participate.',
+    type: 'announcement',
+    priority: 'medium',
+    coordinates: [22.0796, 82.1409],
+    village: 'Baiga Chak',
+    state: 'Chhattisgarh',
+    district: 'Bilaspur',
+    createdBy: 'Forest Conservation Society',
+    createdAt: '2024-01-15T09:15:00Z',
+    expiresAt: '2024-02-05T17:00:00Z',
+    isActive: true,
+    targetAudience: 'local'
+  },
+  {
+    id: '4',
+    title: 'Weather Warning: Heavy Rains Expected',
+    message: 'Heavy rainfall is expected in the region for the next 3 days. Please take necessary precautions and avoid forest areas during this period.',
+    type: 'warning',
+    priority: 'high',
+    coordinates: [19.1663, 83.4156],
+    village: 'Jhirnia',
+    state: 'Odisha',
+    district: 'Rayagada',
+    createdBy: 'Meteorological Department',
+    createdAt: '2024-01-22T08:00:00Z',
+    expiresAt: '2024-01-25T20:00:00Z',
+    isActive: true,
+    targetAudience: 'all'
   }
 ];

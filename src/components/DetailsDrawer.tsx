@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
-import { X, MapPin, Users, TreePine, Calendar, FileText, Download, Edit } from 'lucide-react';
+import { X, MapPin, Users, TreePine, Calendar, FileText, Download, Edit, Save, CheckCircle, Clock, XCircle } from 'lucide-react';
 import { Village } from '@/data/mockData';
 
 interface DetailsDrawerProps {
@@ -12,10 +12,31 @@ interface DetailsDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   isMobile?: boolean;
+  isGovernmentUser?: boolean;
+  isEditing?: boolean;
+  editedVillage?: Village | null;
+  onEdit?: () => void;
+  onSave?: () => void;
+  onCancel?: () => void;
+  onStatusChange?: (status: 'approved' | 'pending' | 'rejected') => void;
 }
 
-const DetailsDrawer: React.FC<DetailsDrawerProps> = ({ village, isOpen, onClose, isMobile = false }) => {
+const DetailsDrawer: React.FC<DetailsDrawerProps> = ({ 
+  village, 
+  isOpen, 
+  onClose, 
+  isMobile = false,
+  isGovernmentUser = false,
+  isEditing = false,
+  editedVillage,
+  onEdit,
+  onSave,
+  onCancel,
+  onStatusChange
+}) => {
   if (!village) return null;
+
+  const displayVillage = isEditing && editedVillage ? editedVillage : village;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -43,21 +64,60 @@ const DetailsDrawer: React.FC<DetailsDrawerProps> = ({ village, isOpen, onClose,
         {/* Header */}
         <div className="sticky top-0 bg-background border-b p-4 flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold">{village.name}</h2>
-            <p className="text-sm text-muted-foreground">{village.district}, {village.state}</p>
+            <h2 className="text-lg font-semibold">{displayVillage.name}</h2>
+            <p className="text-sm text-muted-foreground">{displayVillage.district}, {displayVillage.state}</p>
           </div>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="w-4 h-4" />
-          </Button>
+          <div className="flex items-center space-x-2">
+            {isGovernmentUser && !isEditing && onEdit && (
+              <Button variant="outline" size="sm" onClick={onEdit}>
+                <Edit className="w-4 h-4" />
+              </Button>
+            )}
+            <Button variant="ghost" size="sm" onClick={onClose}>
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
 
         <div className={`space-y-6 ${isMobile ? 'p-3' : 'p-4'}`}>
           {/* Status Badge */}
           <div className="flex items-center justify-center">
-            <Badge className={`text-white px-4 py-2 text-sm ${getStatusColor(village.status)}`}>
-              <span className="mr-2">{getStatusIcon(village.status)}</span>
-              {village.status}
-            </Badge>
+            {isGovernmentUser && isEditing ? (
+              <div className="flex space-x-2">
+                <Button
+                  size="sm"
+                  variant={displayVillage.status === 'Approved' ? 'default' : 'outline'}
+                  onClick={() => onStatusChange?.('approved')}
+                  className={displayVillage.status === 'Approved' ? 'bg-green-600 hover:bg-green-700' : ''}
+                >
+                  <CheckCircle className="w-4 h-4 mr-1" />
+                  Approve
+                </Button>
+                <Button
+                  size="sm"
+                  variant={displayVillage.status === 'Pending' ? 'default' : 'outline'}
+                  onClick={() => onStatusChange?.('pending')}
+                  className={displayVillage.status === 'Pending' ? 'bg-yellow-600 hover:bg-yellow-700' : ''}
+                >
+                  <Clock className="w-4 h-4 mr-1" />
+                  Pending
+                </Button>
+                <Button
+                  size="sm"
+                  variant={displayVillage.status === 'Rejected' ? 'default' : 'outline'}
+                  onClick={() => onStatusChange?.('rejected')}
+                  className={displayVillage.status === 'Rejected' ? 'bg-red-600 hover:bg-red-700' : ''}
+                >
+                  <XCircle className="w-4 h-4 mr-1" />
+                  Reject
+                </Button>
+              </div>
+            ) : (
+              <Badge className={`text-white px-4 py-2 text-sm ${getStatusColor(displayVillage.status)}`}>
+                <span className="mr-2">{getStatusIcon(displayVillage.status)}</span>
+                {displayVillage.status}
+              </Badge>
+            )}
           </div>
 
           {/* Basic Information */}
@@ -186,16 +246,48 @@ const DetailsDrawer: React.FC<DetailsDrawerProps> = ({ village, isOpen, onClose,
                 <Download className="w-4 h-4 mr-2" />
                 Download Records
               </Button>
-              <Button className="w-full justify-start" variant="outline">
-                <Edit className="w-4 h-4 mr-2" />
-                Update Information
-              </Button>
+              {!isGovernmentUser && (
+                <Button className="w-full justify-start" variant="outline">
+                  <Edit className="w-4 h-4 mr-2" />
+                  Update Information
+                </Button>
+              )}
               <Button className="w-full justify-start" variant="outline">
                 <FileText className="w-4 h-4 mr-2" />
                 View Documents
               </Button>
             </CardContent>
           </Card>
+
+          {/* Government Edit Actions */}
+          {isGovernmentUser && isEditing && (
+            <Card className="border-2 border-black">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base text-black">Edit Mode</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex space-x-2">
+                  <Button 
+                    onClick={onSave} 
+                    className="flex-1 bg-black text-white hover:bg-gray-800"
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    Save Changes
+                  </Button>
+                  <Button 
+                    onClick={onCancel} 
+                    variant="outline" 
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Changes will be immediately reflected in local user dashboards
+                </p>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Additional Details */}
           <Card>

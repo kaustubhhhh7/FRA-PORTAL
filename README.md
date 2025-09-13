@@ -1,100 +1,168 @@
-# FRA Vista Dashboard
+# FRA Portal - Forest Rights Administration Dashboard
 
-A comprehensive Forest Rights Act (FRA) dashboard for tracking and visualizing forest rights claims across India.
+A comprehensive digital platform for tracking, visualizing, and managing Forest Rights Act claims across India. Built with React, TypeScript, and modern web technologies.
 
 ## 🌟 Features
 
-- **Interactive Map**: Real-time visualization of forest rights claims across Indian states
-- **State Highlighting**: Special highlighting for key states (Madhya Pradesh, Odisha, Telangana, Tripura)
-- **Advanced Filtering**: Filter by state, district, and claim status
-- **Data Visualization**: Charts and statistics for claim distribution and trends
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-- **Modern UI**: Built with shadcn/ui components and Tailwind CSS
+### 🏛️ Government Dashboard
+- **Interactive Map View** - Visualize forest rights claims across different regions
+- **Claims Management** - Review, approve, or reject forest rights applications
+- **Analytics Dashboard** - Comprehensive statistics and reporting
+- **Alert System** - Create and manage alerts for important updates
+- **Complaints Management** - Handle complaints and issues from local users
+- **Real-time Data** - Live updates on claim statuses and statistics
 
-## 🚀 Live Demo
+### 👥 Local User Dashboard
+- **Claim Tracking** - Monitor your forest rights applications
+- **Interactive Map** - View your claims on an interactive map
+- **Complaint System** - Submit and track complaints
+- **Alert Notifications** - Receive important updates and alerts
+- **Analytics** - View statistics relevant to your region
 
-[Deploy to Netlify](https://app.netlify.com/start/deploy?repository=https://github.com/Victorraj020/FRA)
+### 📱 Mobile Responsive Design
+- **Mobile-First Approach** - Optimized for all device sizes
+- **Touch-Friendly Interface** - Easy navigation on mobile devices
+- **Hamburger Menu** - Clean mobile navigation
+- **Mobile Control Panel** - Access all features on mobile
+- **Responsive Grid Layouts** - Content adapts to screen size
 
-## 🛠️ Tech Stack
+## 🚀 Technology Stack
 
-- **React 18** - Modern UI framework
-- **TypeScript** - Type-safe JavaScript
-- **Vite** - Fast build tool and dev server
-- **Tailwind CSS** - Utility-first CSS framework
-- **Leaflet** - Interactive maps
-- **Recharts** - Data visualization
-- **Radix UI** - Accessible component library
-- **shadcn/ui** - Beautiful UI components
+- **Frontend**: React 18 + TypeScript
+- **UI Framework**: Tailwind CSS + shadcn/ui
+- **State Management**: React Context API
+- **Authentication**: Firebase Auth (with mock fallback)
+- **Maps**: Interactive map components
+- **Icons**: Lucide React
+- **Build Tool**: Vite
+- **Deployment**: Netlify
 
-## 📦 Installation & Setup
+## 🛠️ Installation & Setup
 
-```bash
-# Clone the repository
-git clone https://github.com/Victorraj020/FRA.git
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
+- Git
 
-# Navigate to project directory
-cd FRA
+### Local Development
 
-# Install dependencies
-npm install
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Victorraj020/FRA.git
+   cd FRA
+   ```
 
-# Start development server
-npm run dev
-```
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   Create a `.env.local` file in the root directory:
+   ```env
+   VITE_FIREBASE_API_KEY=your-api-key
+   VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+   VITE_FIREBASE_PROJECT_ID=your-project-id
+   VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+   VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
+   VITE_FIREBASE_APP_ID=your-app-id
+   ```
+
+4. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open your browser**
+   Navigate to `http://localhost:5173`
+
+## 🎯 User Roles
+
+### Government Users
+- Access to comprehensive dashboard
+- Map view opens by default
+- Full claims management capabilities
+- Analytics and reporting tools
+- Alert and complaint management
+
+### Local Users
+- Personal dashboard for claim tracking
+- Complaint submission system
+- Alert notifications
+- Regional analytics
+
+## 📱 Mobile Features
+
+- **Responsive Design** - Works seamlessly on all devices
+- **Mobile Navigation** - Hamburger menu for easy access
+- **Touch Optimized** - Large buttons and touch-friendly interface
+- **Mobile Control Panel** - Full feature access on mobile
+- **Offline Capable** - Basic functionality works offline
+
+## 🔧 Key Components
+
+- **Authentication System** - Secure login with Firebase
+- **Role-Based Access** - Different dashboards for different user types
+- **Interactive Maps** - Visual representation of forest rights data
+- **Real-time Updates** - Live data synchronization
+- **Responsive UI** - Mobile-first design approach
 
 ## 🚀 Deployment
 
-### Netlify (Recommended)
+The application is automatically deployed to Netlify when changes are pushed to the main branch.
 
-1. **One-Click Deploy**: [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/Victorraj020/FRA)
+### Netlify Configuration
+- **Build Command**: `npm run build`
+- **Publish Directory**: `dist`
+- **Node Version**: 18.x
 
-2. **Manual Deploy**:
-   ```bash
-   # Build the project
-   npm run build
-   
-   # Deploy the 'dist' folder to Netlify
-   ```
-
-### Other Platforms
-
-- **Vercel**: Connect your GitHub repository
-- **GitHub Pages**: Use GitHub Actions for deployment
-- **AWS S3**: Upload the `dist` folder to S3
-
-## 📁 Project Structure
+## 📊 Project Structure
 
 ```
 src/
-├── components/          # React components
-│   ├── ui/             # shadcn/ui components
-│   ├── ControlPanel.tsx # Filter and control panel
-│   ├── MapView.tsx     # Interactive map component
-│   └── Header.tsx      # Application header
-├── data/               # Mock data and types
-├── pages/              # Application pages
-└── lib/                # Utility functions
+├── components/          # Reusable UI components
+├── contexts/           # React context providers
+├── hooks/              # Custom React hooks
+├── lib/                # Utility functions and configurations
+├── pages/              # Page components
+├── data/               # Mock data and constants
+└── types/              # TypeScript type definitions
 ```
 
-## 🎯 Key Features
+## 🎨 Design System
 
-### State Highlighting
-The dashboard highlights four key states in red:
-- Madhya Pradesh
-- Odisha  
-- Telangana
-- Tripura
+- **Color Scheme**: Professional blue and green palette
+- **Typography**: Clean, readable fonts
+- **Icons**: Lucide React icon library
+- **Layout**: Responsive grid system
+- **Components**: Consistent UI component library
 
-### Interactive Map
-- Clickable markers for each village
-- Status-based color coding
-- Detailed popups with village information
-- Real-time filtering
+## 🔐 Authentication
 
-### Data Visualization
-- Pie charts for claim distribution
-- Bar charts for monthly trends
-- Statistics cards for key metrics
+- **Firebase Authentication** - Primary authentication method
+- **Mock Authentication** - Fallback for development without Firebase
+- **Role-Based Access** - Government and Local user roles
+- **Secure Logout** - Proper session management
+
+## 📈 Features in Detail
+
+### Map Integration
+- Interactive map with claim locations
+- Filter by state, district, and status
+- Click to view detailed claim information
+- Real-time data visualization
+
+### Analytics Dashboard
+- Total claims statistics
+- Approval rates and trends
+- Regional performance metrics
+- Interactive charts and graphs
+
+### Complaint System
+- Submit complaints with priority levels
+- Track complaint status
+- Government response system
+- Email notifications
 
 ## 🤝 Contributing
 
@@ -104,12 +172,27 @@ The dashboard highlights four key states in red:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
+## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## 👨‍💻 Author
+
+**Victor Raj**
+- GitHub: [@Victorraj020](https://github.com/Victorraj020)
+- Project: [FRA Portal](https://github.com/Victorraj020/FRA)
+
 ## 🙏 Acknowledgments
 
-- Built with [shadcn/ui](https://ui.shadcn.com/)
-- Maps powered by [Leaflet](https://leafletjs.com/)
-- Charts by [Recharts](https://recharts.org/)
+- Forest Rights Act implementation teams
+- Open source community
+- React and TypeScript communities
+- All contributors and testers
+
+## 📞 Support
+
+For support, email victorraj020@gmail.com or create an issue in the repository.
+
+---
+
+**Built with ❤️ for Forest Rights Administration**
