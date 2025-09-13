@@ -1,7 +1,8 @@
 {
-  "name": "vite_react_shadcn_ts",
+  "name": "fra-portal",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Forest Rights Administration Portal - A comprehensive platform for tracking and managing Forest Rights Act claims across India",
   "type": "module",
   "scripts": {
     "dev": "vite",
