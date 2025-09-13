@@ -2,6 +2,25 @@
 
 A comprehensive digital platform for tracking, visualizing, and managing Forest Rights Act claims across India. Built with React, TypeScript, and modern web technologies.
 
+## 🚀 Demo Version
+
+This is a **fully functional demo** that works without requiring Firebase setup or paid services. You can test all features immediately!
+
+### 🎯 How to Test the Demo
+
+1. **Visit the live site** (deployed on Netlify)
+2. **Click "Sign In"**
+3. **Use any email/password** (e.g., `admin@fraportal.com` / `admin123`)
+4. **Or click "Continue with Google"** for demo Google authentication
+5. **Select your role** (Government or Local User)
+6. **Explore all features** - everything works in demo mode!
+
+### 🔑 Demo Credentials
+
+- **Government User**: `admin@fraportal.com` / `admin123`
+- **Local User**: `user@fraportal.com` / `user123`
+- **Google Demo**: Click "Continue with Google" for instant access
+
 ## 🌟 Features
 
 ### 🏛️ Government Dashboard
