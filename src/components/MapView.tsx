@@ -75,6 +75,7 @@ const MapView: React.FC<MapViewProps> = ({
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
   const stateBoundariesRef = useRef<L.Polygon[]>([]);
+  const districtBoundariesRef = useRef<L.Polygon[]>([]);
   
   // Use real GeoJSON data for state boundaries
   
@@ -110,15 +111,15 @@ const MapView: React.FC<MapViewProps> = ({
       const response = await fetch('/four_states_india.geojson');
       const geoJsonData = await response.json();
       
-      // Add GeoJSON layer with red outline styling
+      // Add GeoJSON layer with bright red outline styling
       const geoJsonLayer = L.geoJSON(geoJsonData, {
         style: {
-          color: '#ef4444', // Red color
-          weight: 3,
-          opacity: 0.8,
+          color: '#dc2626', // Bright red color
+          weight: 4,
+          opacity: 0.9,
           fillColor: 'transparent',
           fillOpacity: 0,
-          dashArray: '5, 5' // Dashed line for outline effect
+          dashArray: '6, 6' // Dashed line for outline effect
         },
         onEachFeature: (feature, layer) => {
           // Add popup with state name
@@ -141,6 +142,50 @@ const MapView: React.FC<MapViewProps> = ({
     }
   };
 
+  // Add district boundary overlays using real GeoJSON data
+  const addDistrictBoundaries = async () => {
+    if (!mapInstanceRef.current) return;
+    
+    // Clear existing district boundaries
+    districtBoundariesRef.current.forEach(boundary => boundary.remove());
+    districtBoundariesRef.current = [];
+    
+    try {
+      // Load district GeoJSON data dynamically
+      const response = await fetch('/four_states_districts.geojson');
+      const geoJsonData = await response.json();
+      
+      // Add GeoJSON layer with bright outline styling for districts
+      const geoJsonLayer = L.geoJSON(geoJsonData, {
+        style: {
+          color: '#10b981', // Bright emerald green for districts
+          weight: 2,
+          opacity: 0.8,
+          fillColor: 'transparent',
+          fillOpacity: 0,
+          dashArray: '3, 4' // Slightly larger dashed line for districts
+        },
+        onEachFeature: (feature, layer) => {
+          // Add popup with district and state name
+          const districtName = feature.properties?.NAME_2 || 'District';
+          const stateName = feature.properties?.NAME_1 || 'State';
+          layer.bindPopup(`<div class="text-center"><strong>${districtName}</strong><br/>${stateName}<br/>Click to zoom to district</div>`);
+          
+          // Add click handler to zoom to district
+          layer.on('click', () => {
+            zoomToDistrict(districtName, stateName);
+          });
+          
+          // Store reference for cleanup and feature data
+          (layer as any).feature = feature;
+          districtBoundariesRef.current.push(layer as L.Polygon);
+        }
+      }).addTo(mapInstanceRef.current);
+    } catch (error) {
+      console.error('Error loading district GeoJSON data:', error);
+    }
+  };
+
   // Function to zoom to a specific state
   const zoomToState = (stateName: string) => {
     if (!mapInstanceRef.current) return;
@@ -155,6 +200,24 @@ const MapView: React.FC<MapViewProps> = ({
     const bounds = stateBounds[stateName as keyof typeof stateBounds];
     if (bounds) {
       mapInstanceRef.current.fitBounds(bounds, { padding: [20, 20] });
+    }
+  };
+
+  // Function to zoom to a specific district
+  const zoomToDistrict = (districtName: string, stateName: string) => {
+    if (!mapInstanceRef.current) return;
+    
+    // Find the district boundary and zoom to it
+    const districtLayer = districtBoundariesRef.current.find(layer => {
+      const feature = (layer as any).feature;
+      return feature && feature.properties && 
+             feature.properties.NAME_2 === districtName && 
+             feature.properties.NAME_1 === stateName;
+    });
+    
+    if (districtLayer) {
+      const bounds = (districtLayer as L.Polygon).getBounds();
+      mapInstanceRef.current.fitBounds(bounds, { padding: [10, 10] });
     }
   };
 
@@ -180,12 +243,12 @@ const MapView: React.FC<MapViewProps> = ({
     
     Object.entries(fallbackStates).forEach(([stateName, coordinates]) => {
       const polygon = L.polygon(coordinates, {
-        color: '#ef4444',
-        weight: 3,
-        opacity: 0.8,
+        color: '#dc2626',
+        weight: 4,
+        opacity: 0.9,
         fillColor: 'transparent',
         fillOpacity: 0,
-        dashArray: '5, 5'
+        dashArray: '6, 6'
       }).addTo(mapInstanceRef.current!);
       
       polygon.bindPopup(`<div class="text-center"><strong>${stateName}</strong><br/>Click to zoom to state</div>`);
@@ -211,9 +274,10 @@ const MapView: React.FC<MapViewProps> = ({
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
       
-      // Add state boundaries after map is initialized
+      // Add state and district boundaries after map is initialized
       setTimeout(() => {
         addStateBoundaries();
+        addDistrictBoundaries();
       }, 200);
     }
     
@@ -229,6 +293,10 @@ const MapView: React.FC<MapViewProps> = ({
       // Clear state boundaries
       stateBoundariesRef.current.forEach(boundary => boundary.remove());
       stateBoundariesRef.current = [];
+      
+      // Clear district boundaries
+      districtBoundariesRef.current.forEach(boundary => boundary.remove());
+      districtBoundariesRef.current = [];
       
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
@@ -350,12 +418,23 @@ const MapView: React.FC<MapViewProps> = ({
           {/* State Boundaries Legend */}
           <div className="flex items-center space-x-2 text-xs mt-2 pt-2 border-t border-gray-200">
             <div 
-              className="w-4 h-1 border-2 border-red-500"
+              className="w-4 h-1 border-2 border-red-600"
               style={{ 
-                background: 'repeating-linear-gradient(to right, #ef4444 0px, #ef4444 3px, transparent 3px, transparent 6px)'
+                background: 'repeating-linear-gradient(to right, #dc2626 0px, #dc2626 3px, transparent 3px, transparent 6px)'
               }}
             />
-            <span className="text-xs">Highlighted States</span>
+            <span className="text-xs">State Boundaries</span>
+          </div>
+          
+          {/* District Boundaries Legend */}
+          <div className="flex items-center space-x-2 text-xs mt-1">
+            <div 
+              className="w-4 h-1 border border-emerald-500"
+              style={{ 
+                background: 'repeating-linear-gradient(to right, #10b981 0px, #10b981 2px, transparent 2px, transparent 4px)'
+              }}
+            />
+            <span className="text-xs">District Boundaries</span>
           </div>
         </div>
       </div>
