@@ -187,6 +187,208 @@ export const mockRecommendations = [
   }
 ];
 
+export interface ForestArea {
+  id: string;
+  name: string;
+  type: 'National Park' | 'Wildlife Sanctuary' | 'Reserve Forest' | 'Protected Forest' | 'Community Forest' | 'Forest Range';
+  state: string;
+  district: string;
+  coordinates: [number, number];
+  area: number; // in hectares
+  forestCover: number; // percentage
+  biodiversity: 'High' | 'Medium' | 'Low';
+  protectionStatus: 'Protected' | 'Semi-Protected' | 'Community Managed';
+  establishedYear: number;
+  description: string;
+  threats: string[];
+  conservationMeasures: string[];
+  lastSurvey: string;
+  isActive: boolean;
+}
+
+export const mockForestAreas: ForestArea[] = [
+  {
+    id: '1',
+    name: 'Similipal National Park',
+    type: 'National Park',
+    state: 'Odisha',
+    district: 'Mayurbhanj',
+    coordinates: [21.7500, 86.3333],
+    area: 2750,
+    forestCover: 85,
+    biodiversity: 'High',
+    protectionStatus: 'Protected',
+    establishedYear: 1980,
+    description: 'Famous for its tiger reserve and diverse wildlife including elephants, leopards, and various bird species.',
+    threats: ['Poaching', 'Habitat fragmentation', 'Human-wildlife conflict'],
+    conservationMeasures: ['Anti-poaching patrols', 'Community awareness programs', 'Habitat restoration'],
+    lastSurvey: '2024-01-15',
+    isActive: true
+  },
+  {
+    id: '2',
+    name: 'Karlapat Wildlife Sanctuary',
+    type: 'Wildlife Sanctuary',
+    state: 'Odisha',
+    district: 'Kalahandi',
+    coordinates: [19.1663, 83.4156],
+    area: 175,
+    forestCover: 78,
+    biodiversity: 'High',
+    protectionStatus: 'Protected',
+    establishedYear: 1992,
+    description: 'Home to various wildlife species including elephants, leopards, and numerous bird species.',
+    threats: ['Mining activities', 'Deforestation', 'Illegal logging'],
+    conservationMeasures: ['Regular patrolling', 'Community engagement', 'Eco-tourism development'],
+    lastSurvey: '2024-01-10',
+    isActive: true
+  },
+  {
+    id: '3',
+    name: 'Bamra-Gangpur Forest',
+    type: 'Forest Range',
+    state: 'Odisha',
+    district: 'Sambalpur',
+    coordinates: [21.4667, 83.9833],
+    area: 1250,
+    forestCover: 72,
+    biodiversity: 'Medium',
+    protectionStatus: 'Semi-Protected',
+    establishedYear: 1950,
+    description: 'Mixed deciduous forest with significant teak and sal plantations.',
+    threats: ['Illegal logging', 'Encroachment', 'Fire incidents'],
+    conservationMeasures: ['Fire prevention measures', 'Community forest management', 'Reforestation programs'],
+    lastSurvey: '2024-01-08',
+    isActive: true
+  },
+  {
+    id: '4',
+    name: 'Dhenkanal Forest Range',
+    type: 'Forest Range',
+    state: 'Odisha',
+    district: 'Dhenkanal',
+    coordinates: [20.6667, 85.6000],
+    area: 890,
+    forestCover: 68,
+    biodiversity: 'Medium',
+    protectionStatus: 'Semi-Protected',
+    establishedYear: 1960,
+    description: 'Tropical dry deciduous forest with mixed species composition.',
+    threats: ['Agricultural expansion', 'Grazing pressure', 'Climate change'],
+    conservationMeasures: ['Sustainable forest management', 'Water conservation', 'Biodiversity monitoring'],
+    lastSurvey: '2024-01-12',
+    isActive: true
+  },
+  {
+    id: '5',
+    name: 'Sitabinji Forest Range',
+    type: 'Forest Range',
+    state: 'Odisha',
+    district: 'Keonjhar',
+    coordinates: [21.6333, 85.5833],
+    area: 650,
+    forestCover: 75,
+    biodiversity: 'High',
+    protectionStatus: 'Protected',
+    establishedYear: 1975,
+    description: 'Rich biodiversity hotspot with ancient rock paintings and diverse flora.',
+    threats: ['Mining activities', 'Tourism pressure', 'Pollution'],
+    conservationMeasures: ['Heritage site protection', 'Eco-tourism regulation', 'Pollution control'],
+    lastSurvey: '2024-01-05',
+    isActive: true
+  },
+  {
+    id: '6',
+    name: 'Kanha National Park',
+    type: 'National Park',
+    state: 'Madhya Pradesh',
+    district: 'Mandla',
+    coordinates: [22.1667, 80.6167],
+    area: 1945,
+    forestCover: 90,
+    biodiversity: 'High',
+    protectionStatus: 'Protected',
+    establishedYear: 1955,
+    description: 'Famous for its tiger population and diverse wildlife including barasingha, leopards, and various bird species.',
+    threats: ['Tourism pressure', 'Habitat fragmentation', 'Climate change'],
+    conservationMeasures: ['Tiger conservation programs', 'Eco-tourism management', 'Habitat restoration'],
+    lastSurvey: '2024-01-18',
+    isActive: true
+  },
+  {
+    id: '7',
+    name: 'Pench National Park',
+    type: 'National Park',
+    state: 'Madhya Pradesh',
+    district: 'Chhindwara',
+    coordinates: [21.7000, 79.3000],
+    area: 758,
+    forestCover: 88,
+    biodiversity: 'High',
+    protectionStatus: 'Protected',
+    establishedYear: 1975,
+    description: 'Inspiration for Rudyard Kipling\'s "The Jungle Book", known for its tiger and leopard population.',
+    threats: ['Human-wildlife conflict', 'Poaching', 'Habitat loss'],
+    conservationMeasures: ['Anti-poaching units', 'Community awareness', 'Wildlife corridor protection'],
+    lastSurvey: '2024-01-14',
+    isActive: true
+  },
+  {
+    id: '8',
+    name: 'Kothagudem Forest Range',
+    type: 'Forest Range',
+    state: 'Telangana',
+    district: 'Khammam',
+    coordinates: [17.5512, 80.6177],
+    area: 450,
+    forestCover: 65,
+    biodiversity: 'Medium',
+    protectionStatus: 'Semi-Protected',
+    establishedYear: 1985,
+    description: 'Mixed forest with significant bamboo and teak plantations.',
+    threats: ['Mining activities', 'Urban expansion', 'Water scarcity'],
+    conservationMeasures: ['Water conservation', 'Sustainable mining practices', 'Urban planning integration'],
+    lastSurvey: '2024-01-11',
+    isActive: true
+  },
+  {
+    id: '9',
+    name: 'Gomati Wildlife Sanctuary',
+    type: 'Wildlife Sanctuary',
+    state: 'Tripura',
+    district: 'Gomati',
+    coordinates: [23.5000, 91.5000],
+    area: 389,
+    forestCover: 82,
+    biodiversity: 'High',
+    protectionStatus: 'Protected',
+    establishedYear: 1988,
+    description: 'Tropical evergreen forest with rich biodiversity and various endangered species.',
+    threats: ['Deforestation', 'Illegal logging', 'Climate change'],
+    conservationMeasures: ['Strict protection', 'Community conservation', 'Research programs'],
+    lastSurvey: '2024-01-09',
+    isActive: true
+  },
+  {
+    id: '10',
+    name: 'Trishna Wildlife Sanctuary',
+    type: 'Wildlife Sanctuary',
+    state: 'Tripura',
+    district: 'Dhalai',
+    coordinates: [23.8315, 91.2862],
+    area: 195,
+    forestCover: 85,
+    biodiversity: 'High',
+    protectionStatus: 'Protected',
+    establishedYear: 1988,
+    description: 'Known for its bison population and diverse bird species.',
+    threats: ['Habitat fragmentation', 'Poaching', 'Invasive species'],
+    conservationMeasures: ['Wildlife monitoring', 'Anti-poaching patrols', 'Invasive species control'],
+    lastSurvey: '2024-01-07',
+    isActive: true
+  }
+];
+
 export const mockAlerts: Alert[] = [
   {
     id: '1',

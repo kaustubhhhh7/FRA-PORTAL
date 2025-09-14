@@ -19,18 +19,21 @@ import {
   Eye,
   Bell,
   Menu,
-  X
+  X,
+  TreePine  
 } from 'lucide-react';
 import MapView from '@/components/MapView';
 import ControlPanel from '@/components/ControlPanel';
 import DetailsDrawer from '@/components/DetailsDrawer';
 import AlertViewer from '@/components/AlertViewer';
-import { Village, Alert as AlertType, mockAlerts } from '@/data/mockData';
+import ForestLayout from '@/components/ForestLayout';
+import { Village, Alert as AlertType, ForestArea, mockAlerts } from '@/data/mockData';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const LocalDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('map');
   const [selectedVillage, setSelectedVillage] = useState<Village | null>(null);
+  const [selectedForest, setSelectedForest] = useState<ForestArea | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isControlPanelOpen, setIsControlPanelOpen] = useState(false);
   const [showComplaintForm, setShowComplaintForm] = useState(false);
@@ -73,6 +76,11 @@ const LocalDashboard: React.FC = () => {
   const handleVillageSelect = (village: Village) => {
     setSelectedVillage(village);
     setIsDrawerOpen(true);
+  };
+
+  const handleForestSelect = (forest: ForestArea) => {
+    setSelectedForest(forest);
+    console.log('Selected forest:', forest);
   };
 
   const handleCloseDrawer = () => {
@@ -165,6 +173,7 @@ const LocalDashboard: React.FC = () => {
               {[
                 { id: 'dashboard', label: 'Dashboard', icon: Grid3X3 },
                 { id: 'map', label: 'Map', icon: MapPin },
+                { id: 'forests', label: 'Forests', icon: TreePine },
                 { id: 'alerts', label: 'Alerts', icon: Bell },
                 { id: 'complaints', label: 'My Complaints', icon: AlertTriangle },
                 { id: 'analytics', label: 'Analytics', icon: BarChart3 }
@@ -218,7 +227,7 @@ const LocalDashboard: React.FC = () => {
                 variant="outline" 
                 size="sm" 
                 onClick={handleLogout}
-                className="flex items-center space-x-1 border-2 border-white/40 text-white hover:bg-white/20 hover:border-white/60 px-3 py-2 rounded-lg font-medium transition-all duration-200"
+                className="flex items-center space-x-1 border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-600 px-3 py-2 rounded-lg font-medium transition-all duration-200"
               >
                 <LogOut className="h-4 w-4" />
                 <span>Logout</span>
@@ -231,10 +240,11 @@ const LocalDashboard: React.FC = () => {
             <div className="md:hidden mt-4 pb-4 border-t border-white/20 bg-gray-900">
               <div className="pt-4 space-y-2">
                 {/* Mobile Navigation Tabs */}
-                <div className="grid grid-cols-2 gap-2 mb-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
                   {[
                     { id: 'dashboard', label: 'Dashboard', icon: Grid3X3 },
                     { id: 'map', label: 'Map', icon: MapPin },
+                    { id: 'forests', label: 'Forests', icon: TreePine },
                     { id: 'alerts', label: 'Alerts', icon: Bell },
                     { id: 'complaints', label: 'Complaints', icon: AlertTriangle },
                     { id: 'analytics', label: 'Analytics', icon: BarChart3 }
@@ -248,14 +258,14 @@ const LocalDashboard: React.FC = () => {
                           setActiveTab(tab.id);
                           setIsMobileMenuOpen(false);
                         }}
-                        className={`flex items-center space-x-2 font-semibold px-3 py-2 rounded-lg transition-all duration-200 ${
+                        className={`flex items-center space-x-1 sm:space-x-2 font-semibold px-2 sm:px-3 py-2 rounded-lg transition-all duration-200 ${
                           activeTab === tab.id 
                             ? 'bg-white text-black shadow-lg border-2 border-white hover:bg-gray-100' 
                             : 'border-2 border-white/40 text-white bg-white/10 hover:bg-white/20 hover:border-white/60'
                         }`}
                       >
-                        <Icon className="w-4 h-4" />
-                        <span className="text-sm">{tab.label}</span>
+                        <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="text-xs sm:text-sm">{tab.label}</span>
                       </Button>
                     );
                   })}
@@ -279,7 +289,7 @@ const LocalDashboard: React.FC = () => {
                     variant="outline" 
                     size="sm" 
                     onClick={handleLogout}
-                    className="flex items-center space-x-1 border-2 border-white/40 text-white bg-white/10 hover:bg-white/20 hover:border-white/60 px-3 py-2 rounded-lg font-medium transition-all duration-200"
+                    className="flex items-center space-x-1 border-2 border-red-500 text-red-500 bg-white hover:bg-red-500 hover:text-white hover:border-red-600 px-3 py-2 rounded-lg font-medium transition-all duration-200"
                   >
                     <LogOut className="h-4 w-4" />
                     <span>Logout</span>
@@ -336,6 +346,13 @@ const LocalDashboard: React.FC = () => {
         {activeTab === 'map' && (
           <div className="flex-1 p-2 sm:p-4">
             <MapView onVillageSelect={handleVillageSelect} selectedFilters={filters} userType="local" />
+          </div>
+        )}
+
+        {/* Forest Layout View */}
+        {activeTab === 'forests' && (
+          <div className="flex-1 h-full">
+            <ForestLayout onForestSelect={handleForestSelect} userType="local" />
           </div>
         )}
 

@@ -113,16 +113,16 @@ const AlertManagement: React.FC<AlertManagementProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Alert Management</h2>
-          <p className="text-muted-foreground">Create and manage alerts for local users</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">Alert Management</h2>
+          <p className="text-sm sm:text-base text-muted-foreground">Create and manage alerts for local users</p>
         </div>
         <Button 
           onClick={() => setShowCreateForm(true)}
-          className="btn-primary"
+          className="btn-primary w-full sm:w-auto"
         >
           <Plus className="w-4 h-4 mr-2" />
           Create Alert
@@ -131,15 +131,15 @@ const AlertManagement: React.FC<AlertManagementProps> = ({
 
       {/* Create Alert Form */}
       {showCreateForm && (
-        <Card className="border-2 border-black">
-          <CardHeader>
-            <CardTitle>Create New Alert</CardTitle>
-            <CardDescription>
+        <Card className="border-2 border-black mx-2 sm:mx-0">
+          <CardHeader className="p-3 sm:p-6">
+            <CardTitle className="text-lg sm:text-xl">Create New Alert</CardTitle>
+            <CardDescription className="text-sm sm:text-base">
               Create an alert that will be visible to local users on the map
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <CardContent className="space-y-4 p-3 sm:p-6 pt-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="title">Alert Title</Label>
                 <Input
@@ -259,60 +259,66 @@ const AlertManagement: React.FC<AlertManagementProps> = ({
       )}
 
       {/* Alerts List */}
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4 px-2 sm:px-0">
         {alerts.map((alert) => (
           <Card key={alert.id} className="border">
-            <CardHeader>
-              <div className="flex items-center justify-between">
+            <CardHeader className="p-3 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="flex items-center space-x-2">
                   {getAlertIcon(alert.type)}
-                  <CardTitle className="text-lg">{alert.title}</CardTitle>
+                  <CardTitle className="text-base sm:text-lg break-words">{alert.title}</CardTitle>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Badge className={getTypeColor(alert.type)}>
-                    {alert.type.toUpperCase()}
-                  </Badge>
-                  <Badge className={getPriorityColor(alert.priority)}>
-                    {alert.priority.toUpperCase()}
-                  </Badge>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-2">
+                  <div className="flex items-center space-x-2">
+                    <Badge className={`${getTypeColor(alert.type)} text-xs`}>
+                      {alert.type.toUpperCase()}
+                    </Badge>
+                    <Badge className={`${getPriorityColor(alert.priority)} text-xs`}>
+                      {alert.priority.toUpperCase()}
+                    </Badge>
+                  </div>
                   <div className="flex space-x-1">
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => setEditingAlert(alert)}
+                      className="text-xs px-2 py-1"
                     >
-                      <Edit className="w-4 h-4" />
+                      <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
                     </Button>
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => onDeleteAlert(alert.id)}
+                      className="text-xs px-2 py-1"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                     </Button>
                   </div>
                 </div>
               </div>
-              <CardDescription>
+              <CardDescription className="text-xs sm:text-sm break-words">
                 {alert.village && `${alert.village}, `}{alert.district}, {alert.state}
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <p className="text-foreground mb-4">{alert.message}</p>
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <div className="flex items-center space-x-4">
-                  <span>Created by: {alert.createdBy}</span>
-                  <span>•</span>
-                  <span>Target: {alert.targetAudience}</span>
+            <CardContent className="p-3 sm:p-6 pt-0">
+              <p className="text-sm sm:text-base text-foreground mb-4 break-words">{alert.message}</p>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs sm:text-sm text-muted-foreground gap-2 sm:gap-0">
+                <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4">
+                  <span className="break-words">Created by: {alert.createdBy}</span>
+                  <span className="hidden sm:inline">•</span>
+                  <span className="break-words">Target: {alert.targetAudience}</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Calendar className="w-4 h-4" />
-                  <span>{new Date(alert.createdAt).toLocaleDateString()}</span>
+                <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                  <div className="flex items-center space-x-1">
+                    <Calendar className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                    <span className="break-words">{new Date(alert.createdAt).toLocaleDateString()}</span>
+                  </div>
                   {alert.expiresAt && (
-                    <>
-                      <Clock className="w-4 h-4 ml-2" />
-                      <span>Expires: {new Date(alert.expiresAt).toLocaleDateString()}</span>
-                    </>
+                    <div className="flex items-center space-x-1">
+                      <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                      <span className="break-words">Expires: {new Date(alert.expiresAt).toLocaleDateString()}</span>
+                    </div>
                   )}
                 </div>
               </div>
@@ -323,38 +329,42 @@ const AlertManagement: React.FC<AlertManagementProps> = ({
 
       {/* Edit Alert Modal */}
       {editingAlert && (
-        <Card className="fixed inset-0 z-50 bg-background border-2 border-black m-4 max-h-[90vh] overflow-y-auto">
-          <CardHeader>
-            <CardTitle>Edit Alert</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="edit-title">Alert Title</Label>
-              <Input
-                id="edit-title"
-                value={editingAlert.title}
-                onChange={(e) => setEditingAlert({...editingAlert, title: e.target.value})}
-              />
-            </div>
-            <div>
-              <Label htmlFor="edit-message">Message</Label>
-              <Textarea
-                id="edit-message"
-                value={editingAlert.message}
-                onChange={(e) => setEditingAlert({...editingAlert, message: e.target.value})}
-                rows={4}
-              />
-            </div>
-            <div className="flex space-x-2">
-              <Button onClick={handleUpdateAlert} className="bg-black text-white">
-                Save Changes
-              </Button>
-              <Button variant="outline" onClick={() => setEditingAlert(null)}>
-                Cancel
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4">
+          <Card className="bg-background border-2 border-black w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <CardHeader className="p-3 sm:p-6">
+              <CardTitle className="text-lg sm:text-xl">Edit Alert</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 p-3 sm:p-6 pt-0">
+              <div>
+                <Label htmlFor="edit-title" className="text-sm sm:text-base">Alert Title</Label>
+                <Input
+                  id="edit-title"
+                  value={editingAlert.title}
+                  onChange={(e) => setEditingAlert({...editingAlert, title: e.target.value})}
+                  className="text-sm sm:text-base"
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-message" className="text-sm sm:text-base">Message</Label>
+                <Textarea
+                  id="edit-message"
+                  value={editingAlert.message}
+                  onChange={(e) => setEditingAlert({...editingAlert, message: e.target.value})}
+                  rows={4}
+                  className="text-sm sm:text-base"
+                />
+              </div>
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                <Button onClick={handleUpdateAlert} className="bg-black text-white w-full sm:w-auto">
+                  Save Changes
+                </Button>
+                <Button variant="outline" onClick={() => setEditingAlert(null)} className="w-full sm:w-auto">
+                  Cancel
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
     </div>
   );

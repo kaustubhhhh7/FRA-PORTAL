@@ -20,18 +20,21 @@ import {
   Save,
   Trash2,
   Bell,
-  Menu
+  Menu,
+  TreePine
 } from 'lucide-react';
 import MapView from '@/components/MapView';
 import ControlPanel from '@/components/ControlPanel';
 import DetailsDrawer from '@/components/DetailsDrawer';
 import AlertManagement from '@/components/AlertManagement';
-import { Village, Alert as AlertType, mockAlerts } from '@/data/mockData';
+import ForestLayout from '@/components/ForestLayout';
+import { Village, Alert as AlertType, ForestArea, mockAlerts } from '@/data/mockData';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const GovernmentDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('map');
   const [selectedVillage, setSelectedVillage] = useState<Village | null>(null);
+  const [selectedForest, setSelectedForest] = useState<ForestArea | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isControlPanelOpen, setIsControlPanelOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -79,6 +82,11 @@ const GovernmentDashboard: React.FC = () => {
     setSelectedVillage(village);
     setEditedVillage({ ...village });
     setIsDrawerOpen(true);
+  };
+
+  const handleForestSelect = (forest: ForestArea) => {
+    setSelectedForest(forest);
+    console.log('Selected forest:', forest);
   };
 
   const handleCloseDrawer = () => {
@@ -213,6 +221,7 @@ const GovernmentDashboard: React.FC = () => {
               {[
                 { id: 'dashboard', label: 'Dashboard', icon: Grid3X3 },
                 { id: 'map', label: 'Map', icon: MapPin },
+                { id: 'forests', label: 'Forests', icon: TreePine },
                 { id: 'alerts', label: 'Alerts', icon: Bell },
                 { id: 'complaints', label: 'Complaints', icon: AlertTriangle },
                 { id: 'analytics', label: 'Analytics', icon: BarChart3 }
@@ -266,7 +275,7 @@ const GovernmentDashboard: React.FC = () => {
                 variant="outline" 
                 size="sm" 
                 onClick={handleLogout}
-                className="flex items-center space-x-1 border-2 border-white/40 text-white hover:bg-white/20 hover:border-white/60 px-3 py-2 rounded-lg font-medium transition-all duration-200"
+                className="flex items-center space-x-1 border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-600 px-3 py-2 rounded-lg font-medium transition-all duration-200"
               >
                 <LogOut className="h-4 w-4" />
                 <span>Logout</span>
@@ -279,10 +288,11 @@ const GovernmentDashboard: React.FC = () => {
             <div className="md:hidden mt-4 pb-4 border-t border-white/20 bg-gray-900">
               <div className="pt-4 space-y-2">
                 {/* Mobile Navigation Tabs */}
-                <div className="grid grid-cols-2 gap-2 mb-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
                   {[
                     { id: 'dashboard', label: 'Dashboard', icon: Grid3X3 },
                     { id: 'map', label: 'Map', icon: MapPin },
+                    { id: 'forests', label: 'Forests', icon: TreePine },
                     { id: 'alerts', label: 'Alerts', icon: Bell },
                     { id: 'complaints', label: 'Complaints', icon: AlertTriangle },
                     { id: 'analytics', label: 'Analytics', icon: BarChart3 }
@@ -296,14 +306,14 @@ const GovernmentDashboard: React.FC = () => {
                           setActiveTab(tab.id);
                           setIsMobileMenuOpen(false);
                         }}
-                        className={`flex items-center space-x-2 font-semibold px-3 py-2 rounded-lg transition-all duration-200 ${
+                        className={`flex items-center space-x-1 sm:space-x-2 font-semibold px-2 sm:px-3 py-2 rounded-lg transition-all duration-200 ${
                           activeTab === tab.id 
                             ? 'bg-blue-600 text-white shadow-lg border-2 border-blue-500 hover:bg-blue-700' 
                             : 'border-2 border-gray-300 text-gray-800 bg-white hover:bg-gray-100 hover:border-gray-400'
                         }`}
                       >
-                        <Icon className="w-4 h-4" />
-                        <span className="text-sm">{tab.label}</span>
+                        <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="text-xs sm:text-sm">{tab.label}</span>
                       </Button>
                     );
                   })}
@@ -327,7 +337,7 @@ const GovernmentDashboard: React.FC = () => {
                     variant="outline" 
                     size="sm" 
                     onClick={handleLogout}
-                    className="flex items-center space-x-1 border-2 border-red-300 text-red-700 bg-white hover:bg-red-50 hover:border-red-400 px-3 py-2 rounded-lg font-medium transition-all duration-200"
+                    className="flex items-center space-x-1 border-2 border-red-500 text-red-500 bg-white hover:bg-red-500 hover:text-white hover:border-red-600 px-3 py-2 rounded-lg font-medium transition-all duration-200"
                   >
                     <LogOut className="h-4 w-4" />
                     <span>Logout</span>
@@ -426,6 +436,13 @@ const GovernmentDashboard: React.FC = () => {
         {activeTab === 'map' && (
           <div className="flex-1 p-2 sm:p-4">
             <MapView onVillageSelect={handleVillageSelect} selectedFilters={filters} userType="government" />
+          </div>
+        )}
+
+        {/* Forest Layout View */}
+        {activeTab === 'forests' && (
+          <div className="flex-1 h-full max-h-[calc(100vh-80px)]">
+            <ForestLayout onForestSelect={handleForestSelect} userType="government" />
           </div>
         )}
 

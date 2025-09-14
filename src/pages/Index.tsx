@@ -65,7 +65,7 @@ const Index = () => {
           variant="outline" 
           size="sm" 
           onClick={handleLogout}
-          className="flex items-center space-x-1"
+          className="flex items-center space-x-1 border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-600 px-3 py-2 rounded-lg font-medium transition-all duration-200"
         >
           <LogOut className="h-4 w-4" />
           <span>Logout</span>

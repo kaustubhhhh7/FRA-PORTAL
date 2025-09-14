@@ -74,17 +74,17 @@ const AlertViewer: React.FC<AlertViewerProps> = ({ alerts, onAlertClick }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-foreground mb-2">Alerts & Announcements</h2>
-        <p className="text-muted-foreground">Stay updated with the latest information from the government</p>
+      <div className="px-2 sm:px-0">
+        <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">Alerts & Announcements</h2>
+        <p className="text-sm sm:text-base text-muted-foreground">Stay updated with the latest information from the government</p>
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-4">
+      <Card className="mx-2 sm:mx-0">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <div className="flex-1">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -92,13 +92,13 @@ const AlertViewer: React.FC<AlertViewerProps> = ({ alerts, onAlertClick }) => {
                   placeholder="Search alerts..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 text-sm sm:text-base"
                 />
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">
               <Select value={filterType} onValueChange={setFilterType}>
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-full sm:w-32 text-sm">
                   <SelectValue placeholder="Type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -110,7 +110,7 @@ const AlertViewer: React.FC<AlertViewerProps> = ({ alerts, onAlertClick }) => {
                 </SelectContent>
               </Select>
               <Select value={filterPriority} onValueChange={setFilterPriority}>
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-full sm:w-32 text-sm">
                   <SelectValue placeholder="Priority" />
                 </SelectTrigger>
                 <SelectContent>
@@ -126,13 +126,13 @@ const AlertViewer: React.FC<AlertViewerProps> = ({ alerts, onAlertClick }) => {
       </Card>
 
       {/* Alerts List */}
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4 px-2 sm:px-0">
         {filteredAlerts.length === 0 ? (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <Bell className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">No Alerts Found</h3>
-              <p className="text-muted-foreground">
+          <Card className="mx-2 sm:mx-0">
+            <CardContent className="p-6 sm:p-8 text-center">
+              <Bell className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">No Alerts Found</h3>
+              <p className="text-sm sm:text-base text-muted-foreground">
                 {searchTerm || filterType !== 'all' || filterPriority !== 'all'
                   ? 'Try adjusting your search or filter criteria'
                   : 'No active alerts at the moment'
@@ -144,81 +144,81 @@ const AlertViewer: React.FC<AlertViewerProps> = ({ alerts, onAlertClick }) => {
           filteredAlerts.map((alert) => (
             <Card 
               key={alert.id} 
-              className={`border transition-all duration-200 hover:shadow-md ${
+              className={`border transition-all duration-200 hover:shadow-md mx-2 sm:mx-0 ${
                 isExpired(alert.expiresAt) ? 'opacity-60' : ''
               }`}
             >
-              <CardHeader>
-                <div className="flex items-start justify-between">
+              <CardHeader className="p-3 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                   <div className="flex items-start space-x-3">
                     {getAlertIcon(alert.type)}
-                    <div className="flex-1">
-                      <CardTitle className="text-lg flex items-center space-x-2">
-                        <span>{alert.title}</span>
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="text-base sm:text-lg flex flex-col sm:flex-row sm:items-center gap-2">
+                        <span className="break-words">{alert.title}</span>
                         {isExpired(alert.expiresAt) && (
-                          <Badge variant="outline" className="text-gray-500">
+                          <Badge variant="outline" className="text-gray-500 text-xs w-fit">
                             Expired
                           </Badge>
                         )}
                       </CardTitle>
-                      <CardDescription className="flex items-center space-x-2 mt-1">
-                        <MapPin className="w-4 h-4" />
-                        <span>
+                      <CardDescription className="flex items-center space-x-2 mt-1 text-xs sm:text-sm">
+                        <MapPin className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                        <span className="break-words">
                           {alert.village && `${alert.village}, `}
                           {alert.district}, {alert.state}
                         </span>
                       </CardDescription>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge className={getTypeColor(alert.type)}>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge className={`${getTypeColor(alert.type)} text-xs`}>
                       {alert.type.toUpperCase()}
                     </Badge>
-                    <Badge className={getPriorityColor(alert.priority)}>
+                    <Badge className={`${getPriorityColor(alert.priority)} text-xs`}>
                       {alert.priority.toUpperCase()}
                     </Badge>
                   </div>
                 </div>
               </CardHeader>
               
-              <CardContent>
-                <p className="text-foreground mb-4 leading-relaxed">{alert.message}</p>
+              <CardContent className="p-3 sm:p-6 pt-0">
+                <p className="text-sm sm:text-base text-foreground mb-4 leading-relaxed break-words">{alert.message}</p>
                 
                 {/* Attachments */}
                 {alert.attachments && alert.attachments.length > 0 && (
                   <div className="mb-4">
-                    <h4 className="text-sm font-medium text-foreground mb-2">Attachments:</h4>
+                    <h4 className="text-xs sm:text-sm font-medium text-foreground mb-2">Attachments:</h4>
                     <div className="flex flex-wrap gap-2">
                       {alert.attachments.map((attachment, index) => (
                         <Button
                           key={index}
                           variant="outline"
                           size="sm"
-                          className="text-xs"
+                          className="text-xs px-2 py-1"
                         >
                           <Download className="w-3 h-3 mr-1" />
-                          {attachment}
+                          <span className="truncate max-w-[120px]">{attachment}</span>
                         </Button>
                       ))}
                     </div>
                   </div>
                 )}
                 
-                <div className="flex items-center justify-between text-sm text-muted-foreground pt-4 border-t">
-                  <div className="flex items-center space-x-4">
-                    <span>By: {alert.createdBy}</span>
-                    <span>•</span>
-                    <span>Target: {alert.targetAudience}</span>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs sm:text-sm text-muted-foreground pt-4 border-t gap-2 sm:gap-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4">
+                    <span className="break-words">By: {alert.createdBy}</span>
+                    <span className="hidden sm:inline">•</span>
+                    <span className="break-words">Target: {alert.targetAudience}</span>
                   </div>
-                  <div className="flex items-center space-x-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4">
                     <div className="flex items-center space-x-1">
-                      <Calendar className="w-4 h-4" />
-                      <span>{new Date(alert.createdAt).toLocaleDateString()}</span>
+                      <Calendar className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                      <span className="break-words">{new Date(alert.createdAt).toLocaleDateString()}</span>
                     </div>
                     {alert.expiresAt && (
                       <div className="flex items-center space-x-1">
-                        <Clock className="w-4 h-4" />
-                        <span>
+                        <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                        <span className="break-words">
                           {isExpired(alert.expiresAt) ? 'Expired' : `Expires: ${new Date(alert.expiresAt).toLocaleDateString()}`}
                         </span>
                       </div>
@@ -232,22 +232,22 @@ const AlertViewer: React.FC<AlertViewerProps> = ({ alerts, onAlertClick }) => {
       </div>
 
       {/* Summary */}
-      <Card className="bg-muted/30">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">
+      <Card className="bg-muted/30 mx-2 sm:mx-0">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+            <span className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
               Showing {filteredAlerts.length} of {alerts.length} alerts
             </span>
-            <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-              <div className="flex items-center space-x-1">
+            <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 text-xs text-muted-foreground">
+              <div className="flex items-center justify-center sm:justify-start space-x-1">
                 <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                 <span>High Priority</span>
               </div>
-              <div className="flex items-center space-x-1">
+              <div className="flex items-center justify-center sm:justify-start space-x-1">
                 <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
                 <span>Medium Priority</span>
               </div>
-              <div className="flex items-center space-x-1">
+              <div className="flex items-center justify-center sm:justify-start space-x-1">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                 <span>Low Priority</span>
               </div>

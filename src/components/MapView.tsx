@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { mockVillages, Village } from '@/data/mockData';
+import { mockVillages, Village, mockForestAreas, ForestArea } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -56,24 +56,80 @@ const createMarkerIcon = (status: string, fraType: string) => {
   });
 };
 
+// Custom forest marker icons
+const createForestIcon = (type: string, biodiversity: string) => {
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'National Park': return '#10b981';
+      case 'Wildlife Sanctuary': return '#059669';
+      case 'Reserve Forest': return '#16a34a';
+      case 'Protected Forest': return '#15803d';
+      case 'Community Forest': return '#65a30d';
+      case 'Forest Range': return '#84cc16';
+      default: return '#6b7280';
+    }
+  };
+
+  const getBiodiversitySize = (biodiversity: string) => {
+    switch (biodiversity) {
+      case 'High': return 18;
+      case 'Medium': return 14;
+      case 'Low': return 10;
+      default: return 14;
+    }
+  };
+
+  const color = getTypeColor(type);
+  const size = getBiodiversitySize(biodiversity);
+
+  return L.divIcon({
+    html: `
+      <div style="
+        background-color: ${color};
+        width: ${size}px;
+        height: ${size}px;
+        border-radius: 50%;
+        border: 2px solid white;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        font-weight: bold;
+        color: white;
+      ">
+        🌲
+      </div>
+    `,
+    className: 'forest-marker',
+    iconSize: [size, size],
+    iconAnchor: [size/2, size/2]
+  });
+};
+
 interface MapViewProps {
   onVillageSelect: (village: Village) => void;
+  onForestSelect?: (forest: ForestArea) => void;
   selectedFilters?: {
     state: string;
     district: string;
     status: string;
   };
   userType?: 'government' | 'local';
+  showForests?: boolean;
 }
 
 const MapView: React.FC<MapViewProps> = ({ 
   onVillageSelect, 
+  onForestSelect,
   selectedFilters = { state: 'all-states', district: 'all-districts', status: 'all-status' },
-  userType = 'government'
+  userType = 'government',
+  showForests = false
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
+  const forestMarkersRef = useRef<L.Marker[]>([]);
   const stateBoundariesRef = useRef<L.Polygon[]>([]);
   const districtBoundariesRef = useRef<L.Polygon[]>([]);
   
@@ -287,9 +343,29 @@ const MapView: React.FC<MapViewProps> = ({
         mapInstanceRef.current.invalidateSize();
       }
     }, 100);
+
+    // Handle window resize for mobile orientation changes
+    const handleResize = () => {
+      if (mapInstanceRef.current) {
+        setTimeout(() => {
+          mapInstanceRef.current?.invalidateSize();
+        }, 100);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
     
     // Cleanup function
     return () => {
+      window.removeEventListener('resize', handleResize);
+      // Clear village markers
+      markersRef.current.forEach(marker => marker.remove());
+      markersRef.current = [];
+      
+      // Clear forest markers
+      forestMarkersRef.current.forEach(marker => marker.remove());
+      forestMarkersRef.current = [];
+      
       // Clear state boundaries
       stateBoundariesRef.current.forEach(boundary => boundary.remove());
       stateBoundariesRef.current = [];
@@ -309,9 +385,13 @@ const MapView: React.FC<MapViewProps> = ({
   useEffect(() => {
     if (!mapInstanceRef.current) return;
     
-    // Clear existing markers
+    // Clear existing village markers
     markersRef.current.forEach(marker => marker.remove());
     markersRef.current = [];
+    
+    // Clear existing forest markers
+    forestMarkersRef.current.forEach(marker => marker.remove());
+    forestMarkersRef.current = [];
     
     // Add markers for filtered villages
     const filteredVillages = getFilteredVillages();
@@ -323,17 +403,17 @@ const MapView: React.FC<MapViewProps> = ({
       
       // Create popup content
       const popupContent = document.createElement('div');
-      popupContent.className = 'p-3 sm:p-4 min-w-[240px] sm:min-w-[280px]';
+      popupContent.className = 'p-3 min-w-[200px] sm:min-w-[240px] lg:min-w-[280px]';
       popupContent.innerHTML = `
         <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <h3 class="font-semibold text-lg">${village.name}</h3>
-            <span class="text-white px-2 py-1 rounded-full text-xs ${getStatusColor(village.status)}">
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="font-semibold text-sm sm:text-lg leading-tight">${village.name}</h3>
+            <span class="text-white px-2 py-1 rounded-full text-xs flex-shrink-0 ${getStatusColor(village.status)}">
               ${village.status}
             </span>
           </div>
           
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
             <div>
               <span class="text-muted-foreground">State:</span>
               <p class="font-medium">${village.state}</p>
@@ -369,13 +449,81 @@ const MapView: React.FC<MapViewProps> = ({
         marker.openPopup();
       });
     });
-  }, [selectedFilters, onVillageSelect]);
+
+    // Add forest markers if showForests is true
+    if (showForests && onForestSelect) {
+      mockForestAreas.forEach((forest) => {
+        const marker = L.marker(forest.coordinates, {
+          icon: createForestIcon(forest.type, forest.biodiversity)
+        }).addTo(mapInstanceRef.current!);
+        forestMarkersRef.current.push(marker);
+        
+        // Create forest popup content
+        const popupContent = document.createElement('div');
+        popupContent.className = 'p-3 min-w-[200px] sm:min-w-[240px] lg:min-w-[280px]';
+        popupContent.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <h3 class="font-semibold text-sm sm:text-lg leading-tight">${forest.name}</h3>
+              <span class="text-white px-2 py-1 rounded-full text-xs bg-green-600 flex-shrink-0">
+                ${forest.type}
+              </span>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
+              <div>
+                <span class="text-muted-foreground">State:</span>
+                <p class="font-medium">${forest.state}</p>
+              </div>
+              <div>
+                <span class="text-muted-foreground">District:</span>
+                <p class="font-medium">${forest.district}</p>
+              </div>
+              <div>
+                <span class="text-muted-foreground">Area:</span>
+                <p class="font-medium">${forest.area} ha</p>
+              </div>
+              <div>
+                <span class="text-muted-foreground">Forest Cover:</span>
+                <p class="font-medium">${forest.forestCover}%</p>
+              </div>
+              <div>
+                <span class="text-muted-foreground">Biodiversity:</span>
+                <p class="font-medium">${forest.biodiversity}</p>
+              </div>
+              <div>
+                <span class="text-muted-foreground">Protection:</span>
+                <p class="font-medium">${forest.protectionStatus}</p>
+              </div>
+            </div>
+            
+            <p class="text-xs sm:text-sm text-muted-foreground leading-relaxed">${forest.description}</p>
+          </div>
+        `;
+        
+        // Add button to popup
+        const button = document.createElement('button');
+        button.className = 'w-full bg-green-600 text-white py-2 px-3 rounded-md text-sm mt-3 hover:bg-green-700';
+        button.textContent = 'View Forest Details';
+        button.onclick = () => onForestSelect(forest);
+        popupContent.appendChild(button);
+        
+        // Bind popup to marker
+        marker.bindPopup(popupContent);
+        
+        // Add click handler
+        marker.on('click', () => {
+          marker.openPopup();
+        });
+      });
+    }
+  }, [selectedFilters, onVillageSelect, showForests, onForestSelect]);
 
   // Add explicit styles to ensure map container has height
   const mapContainerStyle = {
     height: '100%',
     width: '100%',
-    minHeight: '500px', // Ensure minimum height
+    minHeight: '300px', // Reduced minimum height for mobile
     position: 'relative' as 'relative',
     zIndex: 1
   };
@@ -390,15 +538,15 @@ const MapView: React.FC<MapViewProps> = ({
   };
 
   return (
-    <div className={`h-full relative bg-card rounded-lg overflow-hidden shadow-card ${getBorderStyle()}`} style={{...mapContainerStyle, display: 'block', height: '100%', minHeight: '500px'}}>
+    <div className={`h-full relative bg-card rounded-lg overflow-hidden shadow-card ${getBorderStyle()}`} style={{...mapContainerStyle, display: 'block', height: '100%', minHeight: '300px'}}>
       <div 
         ref={mapRef}
         style={{ height: '100%', width: '100%', position: 'absolute', top: 0, left: 0 }}
         className="h-full w-full z-10"
       />
       
-      {/* Map Legend */}
-      <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-card p-2 sm:p-4 rounded-lg shadow-card z-[1000]">
+      {/* Map Legend - Responsive */}
+      <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-card p-2 sm:p-3 lg:p-4 rounded-lg shadow-card z-[1000] max-w-[180px] sm:max-w-xs">
         <h4 className="font-semibold mb-2 text-xs sm:text-sm">Legend</h4>
         <div className="space-y-1 sm:space-y-2">
           {[
@@ -406,19 +554,34 @@ const MapView: React.FC<MapViewProps> = ({
             { status: 'Pending', color: '#f59e0b' },
             { status: 'Rejected', color: '#ef4444' }
           ].map(({ status, color }) => (
-            <div key={status} className="flex items-center space-x-2 text-xs">
+            <div key={status} className="flex items-center space-x-1 sm:space-x-2 text-xs">
               <div 
-                className="w-2 h-2 sm:w-3 sm:h-3 rounded-full border border-white shadow-sm"
+                className="w-2 h-2 sm:w-3 sm:h-3 rounded-full border border-white shadow-sm flex-shrink-0"
                 style={{ backgroundColor: color }}
               />
-              <span className="text-xs">{status}</span>
+              <span className="text-xs truncate">{status}</span>
             </div>
           ))}
           
+          {/* Forest Markers Legend */}
+          {showForests && (
+            <>
+              <div className="flex items-center space-x-1 sm:space-x-2 text-xs mt-2 pt-2 border-t border-gray-200">
+                <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs flex-shrink-0">🌲</div>
+                <span className="text-xs">Forest Areas</span>
+              </div>
+              <div className="text-xs text-gray-600 ml-3 sm:ml-5">
+                <div>• Large: High Biodiversity</div>
+                <div>• Medium: Medium Biodiversity</div>
+                <div>• Small: Low Biodiversity</div>
+              </div>
+            </>
+          )}
+          
           {/* State Boundaries Legend */}
-          <div className="flex items-center space-x-2 text-xs mt-2 pt-2 border-t border-gray-200">
+          <div className="flex items-center space-x-1 sm:space-x-2 text-xs mt-2 pt-2 border-t border-gray-200">
             <div 
-              className="w-4 h-1 border-2 border-red-600"
+              className="w-3 h-1 sm:w-4 sm:h-1 border-2 border-red-600 flex-shrink-0"
               style={{ 
                 background: 'repeating-linear-gradient(to right, #dc2626 0px, #dc2626 3px, transparent 3px, transparent 6px)'
               }}
@@ -427,9 +590,9 @@ const MapView: React.FC<MapViewProps> = ({
           </div>
           
           {/* District Boundaries Legend */}
-          <div className="flex items-center space-x-2 text-xs mt-1">
+          <div className="flex items-center space-x-1 sm:space-x-2 text-xs mt-1">
             <div 
-              className="w-4 h-1 border border-emerald-500"
+              className="w-3 h-1 sm:w-4 sm:h-1 border border-emerald-500 flex-shrink-0"
               style={{ 
                 background: 'repeating-linear-gradient(to right, #10b981 0px, #10b981 2px, transparent 2px, transparent 4px)'
               }}
