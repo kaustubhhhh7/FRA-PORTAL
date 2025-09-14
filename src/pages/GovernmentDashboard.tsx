@@ -425,7 +425,7 @@ const GovernmentDashboard: React.FC = () => {
         {/* Map View */}
         {activeTab === 'map' && (
           <div className="flex-1 p-2 sm:p-4">
-            <MapView onVillageSelect={handleVillageSelect} selectedFilters={filters} />
+            <MapView onVillageSelect={handleVillageSelect} selectedFilters={filters} userType="government" />
           </div>
         )}
 

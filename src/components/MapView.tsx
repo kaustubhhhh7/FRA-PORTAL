@@ -5,6 +5,7 @@ import { mockVillages, Village } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+// GeoJSON will be loaded dynamically
 
 // Fix Leaflet CSS import issue
 import "leaflet/dist/leaflet.css";
@@ -62,15 +63,20 @@ interface MapViewProps {
     district: string;
     status: string;
   };
+  userType?: 'government' | 'local';
 }
 
 const MapView: React.FC<MapViewProps> = ({ 
   onVillageSelect, 
-  selectedFilters = { state: 'all-states', district: 'all-districts', status: 'all-status' } 
+  selectedFilters = { state: 'all-states', district: 'all-districts', status: 'all-status' },
+  userType = 'government'
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
+  const stateBoundariesRef = useRef<L.Polygon[]>([]);
+  
+  // Use real GeoJSON data for state boundaries
   
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -91,6 +97,108 @@ const MapView: React.FC<MapViewProps> = ({
     });
   };
 
+  // Add state boundary overlays using real GeoJSON data
+  const addStateBoundaries = async () => {
+    if (!mapInstanceRef.current) return;
+    
+    // Clear existing boundaries
+    stateBoundariesRef.current.forEach(boundary => boundary.remove());
+    stateBoundariesRef.current = [];
+    
+    try {
+      // Load GeoJSON data dynamically
+      const response = await fetch('/four_states_india.geojson');
+      const geoJsonData = await response.json();
+      
+      // Add GeoJSON layer with red outline styling
+      const geoJsonLayer = L.geoJSON(geoJsonData, {
+        style: {
+          color: '#ef4444', // Red color
+          weight: 3,
+          opacity: 0.8,
+          fillColor: 'transparent',
+          fillOpacity: 0,
+          dashArray: '5, 5' // Dashed line for outline effect
+        },
+        onEachFeature: (feature, layer) => {
+          // Add popup with state name
+          const stateName = feature.properties?.NAME_1 || feature.properties?.name || 'State';
+          layer.bindPopup(`<div class="text-center"><strong>${stateName}</strong><br/>Click to zoom to state</div>`);
+          
+          // Add click handler to zoom to state
+          layer.on('click', () => {
+            zoomToState(stateName);
+          });
+          
+          // Store reference for cleanup
+          stateBoundariesRef.current.push(layer as L.Polygon);
+        }
+      }).addTo(mapInstanceRef.current);
+    } catch (error) {
+      console.error('Error loading GeoJSON data:', error);
+      // Fallback to simplified boundaries if GeoJSON fails to load
+      addFallbackBoundaries();
+    }
+  };
+
+  // Function to zoom to a specific state
+  const zoomToState = (stateName: string) => {
+    if (!mapInstanceRef.current) return;
+    
+    const stateBounds = {
+      'Madhya Pradesh': [[21.0, 74.0], [26.0, 82.0]] as L.LatLngBoundsExpression,
+      'Odisha': [[17.5, 81.5], [22.5, 87.5]] as L.LatLngBoundsExpression,
+      'Telangana': [[15.5, 77.0], [19.5, 81.0]] as L.LatLngBoundsExpression,
+      'Tripura': [[22.5, 91.0], [24.5, 92.5]] as L.LatLngBoundsExpression
+    };
+    
+    const bounds = stateBounds[stateName as keyof typeof stateBounds];
+    if (bounds) {
+      mapInstanceRef.current.fitBounds(bounds, { padding: [20, 20] });
+    }
+  };
+
+  // Fallback function with simplified boundaries
+  const addFallbackBoundaries = () => {
+    if (!mapInstanceRef.current) return;
+    
+    const fallbackStates = {
+      'Madhya Pradesh': [
+        [24.0, 74.0], [24.0, 82.0], [22.0, 82.0], [22.0, 80.0], [21.0, 80.0], 
+        [21.0, 78.0], [22.0, 78.0], [22.0, 76.0], [23.0, 76.0], [23.0, 74.0], [24.0, 74.0]
+      ] as L.LatLngExpression[],
+      'Odisha': [
+        [22.5, 81.5], [22.5, 87.5], [17.5, 87.5], [17.5, 81.5], [22.5, 81.5]
+      ] as L.LatLngExpression[],
+      'Telangana': [
+        [19.5, 77.0], [19.5, 81.0], [15.5, 81.0], [15.5, 77.0], [19.5, 77.0]
+      ] as L.LatLngExpression[],
+      'Tripura': [
+        [24.5, 91.0], [24.5, 92.5], [22.5, 92.5], [22.5, 91.0], [24.5, 91.0]
+      ] as L.LatLngExpression[]
+    };
+    
+    Object.entries(fallbackStates).forEach(([stateName, coordinates]) => {
+      const polygon = L.polygon(coordinates, {
+        color: '#ef4444',
+        weight: 3,
+        opacity: 0.8,
+        fillColor: 'transparent',
+        fillOpacity: 0,
+        dashArray: '5, 5'
+      }).addTo(mapInstanceRef.current!);
+      
+      polygon.bindPopup(`<div class="text-center"><strong>${stateName}</strong><br/>Click to zoom to state</div>`);
+      
+      // Add click handler to zoom to state
+      polygon.on('click', () => {
+        zoomToState(stateName);
+      });
+      
+      stateBoundariesRef.current.push(polygon);
+    });
+  };
+
   // Initialize map using vanilla Leaflet instead of react-leaflet
   useEffect(() => {
     if (mapRef.current && !mapInstanceRef.current) {
@@ -102,6 +210,11 @@ const MapView: React.FC<MapViewProps> = ({
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
+      
+      // Add state boundaries after map is initialized
+      setTimeout(() => {
+        addStateBoundaries();
+      }, 200);
     }
     
     // Force a resize after a short delay to ensure proper rendering
@@ -113,6 +226,10 @@ const MapView: React.FC<MapViewProps> = ({
     
     // Cleanup function
     return () => {
+      // Clear state boundaries
+      stateBoundariesRef.current.forEach(boundary => boundary.remove());
+      stateBoundariesRef.current = [];
+      
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
@@ -195,8 +312,17 @@ const MapView: React.FC<MapViewProps> = ({
     zIndex: 1
   };
 
+  // Define border styles based on user type
+  const getBorderStyle = () => {
+    if (userType === 'government') {
+      return 'border-4 border-blue-500 shadow-blue-200';
+    } else {
+      return 'border-4 border-green-500 shadow-green-200';
+    }
+  };
+
   return (
-    <div className="h-full relative bg-card rounded-lg overflow-hidden shadow-card" style={{...mapContainerStyle, display: 'block', height: '100%', minHeight: '500px'}}>
+    <div className={`h-full relative bg-card rounded-lg overflow-hidden shadow-card ${getBorderStyle()}`} style={{...mapContainerStyle, display: 'block', height: '100%', minHeight: '500px'}}>
       <div 
         ref={mapRef}
         style={{ height: '100%', width: '100%', position: 'absolute', top: 0, left: 0 }}
@@ -220,6 +346,17 @@ const MapView: React.FC<MapViewProps> = ({
               <span className="text-xs">{status}</span>
             </div>
           ))}
+          
+          {/* State Boundaries Legend */}
+          <div className="flex items-center space-x-2 text-xs mt-2 pt-2 border-t border-gray-200">
+            <div 
+              className="w-4 h-1 border-2 border-red-500"
+              style={{ 
+                background: 'repeating-linear-gradient(to right, #ef4444 0px, #ef4444 3px, transparent 3px, transparent 6px)'
+              }}
+            />
+            <span className="text-xs">Highlighted States</span>
+          </div>
         </div>
       </div>
     </div>

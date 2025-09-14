@@ -63,19 +63,6 @@ export const mockVillages: Village[] = [
     lastUpdated: '2024-01-10'
   },
   {
-    id: '3',
-    name: 'Baiga Chak',
-    state: 'Chhattisgarh',
-    district: 'Bilaspur',
-    coordinates: [22.0796, 82.1409],
-    fraType: 'CFR',
-    landArea: 2100,
-    status: 'Approved',
-    population: 3241,
-    forestCover: 82,
-    lastUpdated: '2024-01-12'
-  },
-  {
     id: '4',
     name: 'Jhirnia',
     state: 'Odisha',
@@ -100,19 +87,6 @@ export const mockVillages: Village[] = [
     population: 2890,
     forestCover: 71,
     lastUpdated: '2024-01-18'
-  },
-  {
-    id: '6',
-    name: 'Gond Mohalla',
-    state: 'Maharashtra',
-    district: 'Gondia',
-    coordinates: [21.4559, 80.1925],
-    fraType: 'IFR',
-    landArea: 780,
-    status: 'Pending',
-    population: 1452,
-    forestCover: 58,
-    lastUpdated: '2024-01-05'
   },
   {
     id: '7',
@@ -148,16 +122,8 @@ export const mockStates: State[] = [
     districts: ['Mandla', 'Chhindwara', 'Balaghat', 'Dindori']
   },
   {
-    name: 'Chhattisgarh',
-    districts: ['Bilaspur', 'Korba', 'Surguja', 'Kanker']
-  },
-  {
     name: 'Odisha',
     districts: ['Rayagada', 'Kalahandi', 'Koraput', 'Malkangiri']
-  },
-  {
-    name: 'Maharashtra',
-    districts: ['Gondia', 'Gadchiroli', 'Chandrapur', 'Yavatmal']
   },
   {
     name: 'Telangana',
@@ -252,22 +218,6 @@ export const mockAlerts: Alert[] = [
     createdBy: 'District Forest Officer',
     createdAt: '2024-01-18T14:30:00Z',
     expiresAt: '2024-01-25T18:00:00Z',
-    isActive: true,
-    targetAudience: 'local'
-  },
-  {
-    id: '3',
-    title: 'Conservation Workshop Announcement',
-    message: 'A workshop on sustainable forest management will be conducted on February 5th, 2024, at the community center. All forest rights holders are invited to participate.',
-    type: 'announcement',
-    priority: 'medium',
-    coordinates: [22.0796, 82.1409],
-    village: 'Baiga Chak',
-    state: 'Chhattisgarh',
-    district: 'Bilaspur',
-    createdBy: 'Forest Conservation Society',
-    createdAt: '2024-01-15T09:15:00Z',
-    expiresAt: '2024-02-05T17:00:00Z',
     isActive: true,
     targetAudience: 'local'
   },
