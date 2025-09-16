@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 // Listens globally for Ctrl+Alt+G and prompts for a passcode to access government login
 const SecretShortcut: React.FC = () => {
   const navigate = useNavigate();
+  const GOV_PASSCODE = (import.meta as any)?.env?.VITE_GOV_PASSCODE || 'Hackathon';
 
   useEffect(() => {
     let shiftCount = 0;
@@ -13,7 +14,7 @@ const SecretShortcut: React.FC = () => {
 
     const requestAccess = () => {
       const pass = window.prompt('Enter government access passcode');
-      if (pass && pass === import.meta.env.VITE_GOV_PASSCODE) {
+      if (pass && pass === GOV_PASSCODE) {
         navigate('/login?role=government');
       }
     };

@@ -74,6 +74,7 @@ const LocalDashboard: React.FC = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const longPressTimer = useRef<number | null>(null);
+  const GOV_PASSCODE = (import.meta as any)?.env?.VITE_GOV_PASSCODE || 'Hackathon';
   const { currentUser, logout } = useAuth();
   // Added: limitedMode for anonymous users
   const limitedMode = !currentUser;
@@ -164,7 +165,7 @@ const LocalDashboard: React.FC = () => {
                   // Long-press (700ms) on the logo triggers secret access prompt (mobile-friendly)
                   longPressTimer.current = window.setTimeout(() => {
                     const pass = window.prompt('Enter government access passcode');
-                    if (pass && pass === import.meta.env.VITE_GOV_PASSCODE) {
+                    if (pass && pass === GOV_PASSCODE) {
                       navigate('/login?role=government');
                     }
                   }, 700);
