@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,10 +8,10 @@ import {
   MapPin, 
   FileText, 
   BarChart3, 
-  Grid3X3, 
   LogOut, 
   User, 
   Users,
+  Grid3X3,
   AlertTriangle,
   CheckCircle,
   Clock,
@@ -29,6 +29,7 @@ import AlertViewer from '@/components/AlertViewer';
 import ForestLayout from '@/components/ForestLayout';
 import { Village, Alert as AlertType, ForestArea, mockAlerts } from '@/data/mockData';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useNavigate } from 'react-router-dom';
 
 const LocalDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('map');
@@ -71,7 +72,11 @@ const LocalDashboard: React.FC = () => {
     status: 'all-status'
   });
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const longPressTimer = useRef<number | null>(null);
   const { currentUser, logout } = useAuth();
+  // Added: limitedMode for anonymous users
+  const limitedMode = !currentUser;
 
   const handleVillageSelect = (village: Village) => {
     setSelectedVillage(village);
@@ -98,16 +103,12 @@ const LocalDashboard: React.FC = () => {
       console.log('LocalDashboard: Starting logout process...');
       await logout();
       console.log('LocalDashboard: Logout completed');
-      
-      // Force redirect as backup
       setTimeout(() => {
         console.log('LocalDashboard: Forcing redirect to landing page');
         window.location.href = '/';
       }, 200);
-      
     } catch (error) {
       console.error('LocalDashboard: Failed to log out:', error);
-      // Force redirect even on error
       window.location.href = '/';
     }
   };
@@ -157,7 +158,30 @@ const LocalDashboard: React.FC = () => {
         <div className="container mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="flex items-center space-x-2">
+              <div
+                className="flex items-center space-x-2 select-none"
+                onPointerDown={() => {
+                  // Long-press (700ms) on the logo triggers secret access prompt (mobile-friendly)
+                  longPressTimer.current = window.setTimeout(() => {
+                    const pass = window.prompt('Enter government access passcode');
+                    if (pass && pass === import.meta.env.VITE_GOV_PASSCODE) {
+                      navigate('/login?role=government');
+                    }
+                  }, 700);
+                }}
+                onPointerUp={() => {
+                  if (longPressTimer.current) {
+                    window.clearTimeout(longPressTimer.current);
+                    longPressTimer.current = null;
+                  }
+                }}
+                onPointerLeave={() => {
+                  if (longPressTimer.current) {
+                    window.clearTimeout(longPressTimer.current);
+                    longPressTimer.current = null;
+                  }
+                }}
+              >
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-lg flex items-center justify-center border-2 border-white">
                   <MapPin className="w-4 h-4 sm:w-6 sm:h-6 text-black" />
                 </div>
@@ -171,11 +195,12 @@ const LocalDashboard: React.FC = () => {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-1">
               {[
-                { id: 'dashboard', label: 'Dashboard', icon: Grid3X3 },
+                // Show extra tabs only for authenticated users
+                ...(!limitedMode ? [{ id: 'dashboard', label: 'Dashboard', icon: Grid3X3 }] : []),
                 { id: 'map', label: 'Map', icon: MapPin },
                 { id: 'forests', label: 'Forests', icon: TreePine },
                 { id: 'alerts', label: 'Alerts', icon: Bell },
-                { id: 'complaints', label: 'My Complaints', icon: AlertTriangle },
+                ...(!limitedMode ? [{ id: 'complaints', label: 'My Complaints', icon: AlertTriangle }] : []),
                 { id: 'analytics', label: 'Analytics', icon: BarChart3 }
               ].map((tab) => {
                 const Icon = tab.icon;
@@ -215,23 +240,25 @@ const LocalDashboard: React.FC = () => {
             <div className="hidden md:flex items-center space-x-2">
               <Badge className="bg-white text-black">
                 <Users className="w-3 h-3 mr-1" />
-                Local User
+                User
               </Badge>
               <div className="flex items-center space-x-2">
                 <User className="h-4 w-4 text-white" />
                 <span className="text-sm text-white">
-                  {currentUser?.displayName || currentUser?.email}
+                  {limitedMode ? 'Limited data - please sign in' : (currentUser?.displayName || currentUser?.email)}
                 </span>
               </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleLogout}
-                className="flex items-center space-x-1 border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-600 px-3 py-2 rounded-lg font-medium transition-all duration-200"
-              >
-                <LogOut className="h-4 w-4" />
-                <span>Logout</span>
-              </Button>
+              {!limitedMode && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleLogout}
+                  className="flex items-center space-x-1 border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-600 px-3 py-2 rounded-lg font-medium transition-all duration-200"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
+                </Button>
+              )}
             </div>
           </div>
 
@@ -242,11 +269,11 @@ const LocalDashboard: React.FC = () => {
                 {/* Mobile Navigation Tabs */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
                   {[
-                    { id: 'dashboard', label: 'Dashboard', icon: Grid3X3 },
+                    ...(!limitedMode ? [{ id: 'dashboard', label: 'Dashboard', icon: Grid3X3 }] : []),
                     { id: 'map', label: 'Map', icon: MapPin },
                     { id: 'forests', label: 'Forests', icon: TreePine },
                     { id: 'alerts', label: 'Alerts', icon: Bell },
-                    { id: 'complaints', label: 'Complaints', icon: AlertTriangle },
+                    ...(!limitedMode ? [{ id: 'complaints', label: 'Complaints', icon: AlertTriangle }] : []),
                     { id: 'analytics', label: 'Analytics', icon: BarChart3 }
                   ].map((tab) => {
                     const Icon = tab.icon;
@@ -276,24 +303,26 @@ const LocalDashboard: React.FC = () => {
                   <div className="flex items-center space-x-2">
                     <Badge className="bg-white text-black border border-white">
                       <Users className="w-3 h-3 mr-1" />
-                      Local User
+                      User
                     </Badge>
                   </div>
                   <div className="flex items-center space-x-2">
                     <User className="h-4 w-4 text-white" />
                     <span className="text-sm text-white font-medium">
-                      {currentUser?.displayName || currentUser?.email}
+                      {limitedMode ? 'Limited data - please sign in' : (currentUser?.displayName || currentUser?.email)}
                     </span>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={handleLogout}
-                    className="flex items-center space-x-1 border-2 border-red-500 text-red-500 bg-white hover:bg-red-500 hover:text-white hover:border-red-600 px-3 py-2 rounded-lg font-medium transition-all duration-200"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    <span>Logout</span>
-                  </Button>
+                  {!limitedMode && (
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={handleLogout}
+                      className="flex items-center space-x-1 border-2 border-red-500 text-red-500 bg-white hover:bg-red-500 hover:text-white hover:border-red-600 px-3 py-2 rounded-lg font-medium transition-all duration-200"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>Logout</span>
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
@@ -305,10 +334,10 @@ const LocalDashboard: React.FC = () => {
       <div className="flex flex-1 h-[calc(100vh-80px)] relative">
         {/* Mobile Control Panel Toggle */}
         {isMobile && (
-          <div className="fixed top-20 left-4 z-50">
+          <div className="fixed right-4 bottom-24 z-50">
             <Button
               onClick={() => setIsControlPanelOpen(!isControlPanelOpen)}
-              className="bg-white text-black shadow-lg border-2 border-white hover:bg-gray-100 transition-all duration-200"
+              className="bg-white text-black shadow-lg border-2 border-white hover:bg-gray-100 transition-all duration-200 rounded-full px-4 py-2"
             >
               <Menu className="h-4 w-4 mr-2" />
               Filters
@@ -345,7 +374,8 @@ const LocalDashboard: React.FC = () => {
         {/* Map View */}
         {activeTab === 'map' && (
           <div className="flex-1 p-2 sm:p-4">
-            <MapView onVillageSelect={handleVillageSelect} selectedFilters={filters} userType="local" />
+            {/* Pass limitedMode for anonymous users */}
+            <MapView onVillageSelect={handleVillageSelect} selectedFilters={filters} userType="local" limitedMode={limitedMode} />
           </div>
         )}
 
@@ -495,7 +525,7 @@ const LocalDashboard: React.FC = () => {
           <div className="flex-1 p-4">
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-foreground mb-2">Analytics Dashboard</h2>
-              <p className="text-muted-foreground">View forest rights statistics and trends</p>
+              <p className="text-muted-foreground">{limitedMode ? 'Sign in to view detailed analytics' : 'View forest rights statistics and trends'}</p>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
@@ -504,7 +534,7 @@ const LocalDashboard: React.FC = () => {
                   <CardTitle className="text-lg">Total Claims</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-foreground">1,234</div>
+                  <div className="text-3xl font-bold text-foreground">{limitedMode ? '—' : '1,234'}</div>
                   <p className="text-sm text-muted-foreground">In your region</p>
                 </CardContent>
               </Card>
@@ -514,8 +544,8 @@ const LocalDashboard: React.FC = () => {
                   <CardTitle className="text-lg">Approved Claims</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-green-600">856</div>
-                  <p className="text-sm text-muted-foreground">69% approval rate</p>
+                  <div className="text-3xl font-bold text-green-600">{limitedMode ? '—' : '856'}</div>
+                  <p className="text-sm text-muted-foreground">{limitedMode ? 'Login required' : '69% approval rate'}</p>
                 </CardContent>
               </Card>
               
@@ -524,8 +554,8 @@ const LocalDashboard: React.FC = () => {
                   <CardTitle className="text-lg">My Complaints</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-yellow-600">{myComplaints.length}</div>
-                  <p className="text-sm text-muted-foreground">Submitted complaints</p>
+                  <div className="text-3xl font-bold text-yellow-600">{limitedMode ? '—' : myComplaints.length}</div>
+                  <p className="text-sm text-muted-foreground">{limitedMode ? 'Sign in to view' : 'Submitted complaints'}</p>
                 </CardContent>
               </Card>
             </div>
@@ -551,6 +581,8 @@ const LocalDashboard: React.FC = () => {
         onClose={handleCloseDrawer}
         isMobile={isMobile}
         isGovernmentUser={false}
+        // Pass limitedMode to hide sensitive fields when anonymous
+        limitedMode={limitedMode}
       />
     </div>
   );

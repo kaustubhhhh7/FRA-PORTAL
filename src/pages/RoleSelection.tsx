@@ -57,7 +57,7 @@ const RoleSelection: React.FC = () => {
     },
     {
       id: 'local',
-      title: 'Local User',
+      title: 'User',
       icon: Users,
       description: 'View forest rights information and submit complaints',
       features: [
@@ -184,7 +184,7 @@ const RoleSelection: React.FC = () => {
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground mb-2">Local Users</h4>
+                  <h4 className="font-semibold text-foreground mb-2">Users</h4>
                   <p className="text-muted-foreground text-sm">
                     Can view forest rights information, track claim progress, and submit complaints 
                     or issues. Local users cannot edit claim status but can report discrepancies 

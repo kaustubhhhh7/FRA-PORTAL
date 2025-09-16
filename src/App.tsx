@@ -5,8 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import SecretShortcut from "@/components/SecretShortcut";
 import Landing from "./pages/Landing";
-import RoleSelection from "./pages/RoleSelection";
+// Role selection removed from user flow
 import GovernmentDashboard from "./pages/GovernmentDashboard";
 import LocalDashboard from "./pages/LocalDashboard";
 import Index from "./pages/Index";
@@ -38,13 +39,19 @@ const RoleBasedRouter = () => {
     );
   }
 
+  // CHANGED: Default anonymous users to a limited LocalDashboard instead of Landing page
+  // Old behavior kept here for reference
+  // if (!currentUser) {
+  //   console.log('No current user, showing Landing page');
+  //   return <Landing />;
+  // }
   if (!currentUser) {
-    console.log('No current user, showing Landing page');
-    return <Landing />;
+    return <LocalDashboard />; // limited mode will be handled inside the component
   }
 
   if (!userRole) {
-    return <RoleSelection />;
+    // Default to user dashboard when no explicit role is set
+    return <LocalDashboard />;
   }
 
   if (userRole === 'government') {
@@ -55,7 +62,7 @@ const RoleBasedRouter = () => {
     return <LocalDashboard />;
   }
 
-  return <RoleSelection />;
+  return <LocalDashboard />;
 };
 
 const App = () => (
@@ -65,12 +72,22 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <SecretShortcut />
           <Routes>
             <Route path="/" element={<RoleBasedRouter />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/role-selection" element={<RoleSelection />} />
-            <Route path="/government-dashboard" element={<GovernmentDashboard />} />
+            {/* Role selection route removed */}
+            {/* Wrapped with role-based protection. Only government role can access. */}
+            {/* <Route path="/government-dashboard" element={<GovernmentDashboard />} /> */}
+            <Route 
+              path="/government-dashboard" 
+              element={
+                <ProtectedRoute requiredRole="government">
+                  <GovernmentDashboard />
+                </ProtectedRoute>
+              } 
+            />
             <Route path="/local-dashboard" element={<LocalDashboard />} />
             <Route 
               path="/dashboard" 

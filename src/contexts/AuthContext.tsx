@@ -47,6 +47,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      // Default role for any successful login is 'local' (regular user)
+      localStorage.setItem('userRole', 'local');
+      setUserRole('local');
     } catch (error) {
       console.log('Firebase login failed, using mock login for testing');
       // Mock user for testing when Firebase isn't configured
@@ -58,6 +61,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } as User;
       setCurrentUser(mockUser);
       localStorage.setItem('mockUser', JSON.stringify(mockUser));
+      // Default mock login to 'local' role as well
+      localStorage.setItem('userRole', 'local');
+      setUserRole('local');
     }
   };
 
@@ -65,6 +71,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
+      // Default Google login to 'local' role
+      localStorage.setItem('userRole', 'local');
+      setUserRole('local');
     } catch (error) {
       console.log('Firebase Google login failed, using mock Google login for demo');
       // Mock Google user for demo purposes
@@ -76,6 +85,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } as User;
       setCurrentUser(mockGoogleUser);
       localStorage.setItem('mockUser', JSON.stringify(mockGoogleUser));
+      // Default mock Google login to 'local' role
+      localStorage.setItem('userRole', 'local');
+      setUserRole('local');
     }
   };
 

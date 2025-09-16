@@ -1,217 +1,305 @@
 # FRA Portal - Forest Rights Administration Dashboard
 
-A comprehensive digital platform for tracking, visualizing, and managing Forest Rights Act claims across India. Built with React, TypeScript, and modern web technologies.
+A comprehensive platform for tracking, visualizing, and managing Forest Rights Act (FRA) claims across India. Built with modern web technologies to provide government officials and community leaders with powerful tools for forest rights administration.
 
-## 🚀 Demo Version
+## 🌟 Overview
 
-This is a **fully functional demo** that works without requiring Firebase setup or paid services. You can test all features immediately!
+The FRA Portal is a sophisticated web application designed to streamline forest rights management across India. It provides interactive mapping, real-time data visualization, and comprehensive administrative tools for managing Forest Rights Act claims at both government and local community levels.
 
-### 🎯 How to Test the Demo
+## 🚀 Key Features
 
-1. **Visit the live site** (deployed on Netlify)
-2. **Click "Sign In"**
-3. **Use any email/password** (e.g., `admin@fraportal.com` / `admin123`)
-4. **Or click "Continue with Google"** for demo Google authentication
-5. **Select your role** (Government or Local User)
-6. **Explore all features** - everything works in demo mode!
+### 🗺️ Interactive Mapping
+- Real-time visualization of forest rights claims across Indian states
+- Detailed geographic data with Leaflet maps
+- Focus on key states: Madhya Pradesh, Odisha, Telangana, and Tripura
+- Village-level data with coordinates and forest coverage information
 
-### 🔑 Demo Credentials
+### 📊 Advanced Analytics
+- Comprehensive data visualization with charts and graphs
+- Statistical insights and trend analysis
+- Real-time dashboard updates
+- Customizable reporting tools
 
-- **Government User**: `admin@fraportal.com` / `admin123`
-- **Local User**: `user@fraportal.com` / `user123`
-- **Google Demo**: Click "Continue with Google" for instant access
+### 🔐 Secure Authentication
+- Firebase-powered authentication system
+- Role-based access control (Government vs Local users)
+- Google OAuth integration
+- Protected routes and session management
 
-## 🌟 Features
-
-### 🏛️ Government Dashboard
-- **Interactive Map View** - Visualize forest rights claims across different regions
-- **Claims Management** - Review, approve, or reject forest rights applications
-- **Analytics Dashboard** - Comprehensive statistics and reporting
-- **Alert System** - Create and manage alerts for important updates
-- **Complaints Management** - Handle complaints and issues from local users
-- **Real-time Data** - Live updates on claim statuses and statistics
-
-### 👥 Local User Dashboard
-- **Claim Tracking** - Monitor your forest rights applications
-- **Interactive Map** - View your claims on an interactive map
-- **Complaint System** - Submit and track complaints
-- **Alert Notifications** - Receive important updates and alerts
-- **Analytics** - View statistics relevant to your region
+### 👥 User Management
+- Complete user registration and login system
+- Role selection (Government Official or Local Community Leader)
+- Profile management and user preferences
+- Secure data handling
 
 ### 📱 Mobile Responsive Design
-- **Mobile-First Approach** - Optimized for all device sizes
-- **Touch-Friendly Interface** - Easy navigation on mobile devices
-- **Hamburger Menu** - Clean mobile navigation
-- **Mobile Control Panel** - Access all features on mobile
-- **Responsive Grid Layouts** - Content adapts to screen size
+- Seamless experience across desktop, tablet, and mobile devices
+- Touch-friendly interface
+- Optimized for field work and remote access
 
-## 🚀 Technology Stack
+## 🛠️ Technology Stack
 
-- **Frontend**: React 18 + TypeScript
-- **UI Framework**: Tailwind CSS + shadcn/ui
-- **State Management**: React Context API
-- **Authentication**: Firebase Auth (with mock fallback)
-- **Maps**: Interactive map components
-- **Icons**: Lucide React
-- **Build Tool**: Vite
-- **Deployment**: Netlify
+### Frontend Technologies
+- **React 18** - Modern UI framework with hooks and functional components
+- **TypeScript** - Type-safe development for better code quality
+- **Vite** - Fast build tool and development server
+- **Tailwind CSS** - Utility-first CSS framework for styling
+- **shadcn/ui** - Beautiful, accessible component library
 
-## 🛠️ Installation & Setup
+### UI Components & Libraries
+- **Radix UI** - Headless UI components for accessibility
+- **Lucide React** - Beautiful icon library
+- **Framer Motion** - Smooth animations and transitions
+- **React Hook Form** - Form handling with validation
+- **Zod** - Schema validation
+
+### Mapping & Visualization
+- **Leaflet** - Interactive maps
+- **React Leaflet** - React components for Leaflet
+- **Recharts** - Data visualization and charts
+
+### Backend & Authentication
+- **Firebase** - Authentication, database, and hosting
+- **Firebase Auth** - User authentication and authorization
+- **Google OAuth** - Social login integration
+
+### State Management & Data
+- **TanStack Query** - Server state management
+- **React Context** - Global state management
+- **Custom Hooks** - Reusable stateful logic
+
+### Development Tools
+- **ESLint** - Code linting and quality
+- **PostCSS** - CSS processing
+- **Autoprefixer** - CSS vendor prefixing
+
+## 📁 Project Structure
+
+```
+src/
+├── components/           # Reusable UI components
+│   ├── ui/              # shadcn/ui component library
+│   ├── AlertManagement.tsx    # Alert management system
+│   ├── AlertViewer.tsx        # Alert display component
+│   ├── ControlPanel.tsx       # Dashboard control panel
+│   ├── DetailsDrawer.tsx      # Village details sidebar
+│   ├── ForestLayout.tsx       # Forest area layout
+│   ├── Header.tsx             # Navigation header
+│   ├── MapView.tsx            # Interactive map component
+│   └── ProtectedRoute.tsx     # Route protection wrapper
+├── contexts/            # React Context providers
+│   └── AuthContext.tsx        # Authentication context
+├── data/                # Mock data and types
+│   ├── demoData.ts            # Demo data for development
+│   └── mockData.ts            # Mock data structures
+├── hooks/               # Custom React hooks
+│   ├── use-mobile.tsx         # Mobile detection hook
+│   └── use-toast.ts           # Toast notification hook
+├── lib/                 # Utility libraries
+│   ├── firebase.ts            # Firebase configuration
+│   └── utils.ts               # Utility functions
+├── pages/               # Page components
+│   ├── GovernmentDashboard.tsx    # Government user dashboard
+│   ├── LocalDashboard.tsx        # Local community dashboard
+│   ├── Landing.tsx              # Landing page
+│   ├── Login.tsx                # Login page
+│   ├── SignUp.tsx               # Registration page
+│   ├── RoleSelection.tsx        # Role selection page
+│   ├── Index.tsx                # Main dashboard
+│   └── NotFound.tsx             # 404 error page
+├── App.tsx              # Main application component
+├── main.tsx             # Application entry point
+└── index.css            # Global styles and CSS variables
+```
+
+## 🎯 User Roles & Features
+
+### Government Dashboard
+- **Interactive Map View**: Visualize all forest rights claims across states
+- **Analytics & Reports**: Comprehensive data analysis and reporting
+- **Alert Management**: Create and manage alerts for communities
+- **Village Management**: Edit and update village information
+- **Complaint Resolution**: Handle and resolve community complaints
+- **Forest Area Management**: Manage forest area data and boundaries
+
+### Local Community Dashboard
+- **Village-Specific View**: Focus on local village data and claims
+- **Alert Viewer**: View government announcements and alerts
+- **Complaint Submission**: Submit complaints and issues
+- **Status Tracking**: Track claim status and progress
+- **Forest Information**: Access local forest area information
+
+## 🗺️ Geographic Coverage
+
+The application focuses on four key Indian states with comprehensive forest rights data:
+
+1. **Madhya Pradesh** - Central India's forest heartland
+2. **Odisha** - Eastern coastal state with significant tribal populations
+3. **Telangana** - Southern state with diverse forest ecosystems
+4. **Tripura** - Northeastern state with rich biodiversity
+
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn
-- Git
+- Node.js (v18 or higher)
+- npm or yarn package manager
+- Firebase project setup
 
-### Local Development
+### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/Victorraj020/FRA.git
-   cd FRA
+   git clone <repository-url>
+   cd fra-vista-dash-main
    ```
 
 2. **Install dependencies**
    ```bash
    npm install
+   # or
+   yarn install
    ```
 
-3. **Set up environment variables**
-   Create a `.env.local` file in the root directory:
-   ```env
-   VITE_FIREBASE_API_KEY=your-api-key
-   VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
-   VITE_FIREBASE_PROJECT_ID=your-project-id
-   VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
-   VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
-   VITE_FIREBASE_APP_ID=your-app-id
-   ```
+3. **Set up Firebase**
+   - Create a Firebase project
+   - Enable Authentication (Email/Password and Google)
+   - Copy your Firebase config to `src/lib/firebase.ts`
 
-4. **Start the development server**
+4. **Start development server**
    ```bash
    npm run dev
+   # or
+   yarn dev
    ```
 
 5. **Open your browser**
-   Navigate to `http://localhost:5173`
+   Navigate to `http://localhost:8080`
 
-## 🎯 User Roles
+### Build for Production
 
-### Government Users
-- Access to comprehensive dashboard
-- Map view opens by default
-- Full claims management capabilities
-- Analytics and reporting tools
-- Alert and complaint management
-
-### Local Users
-- Personal dashboard for claim tracking
-- Complaint submission system
-- Alert notifications
-- Regional analytics
-
-## 📱 Mobile Features
-
-- **Responsive Design** - Works seamlessly on all devices
-- **Mobile Navigation** - Hamburger menu for easy access
-- **Touch Optimized** - Large buttons and touch-friendly interface
-- **Mobile Control Panel** - Full feature access on mobile
-- **Offline Capable** - Basic functionality works offline
-
-## 🔧 Key Components
-
-- **Authentication System** - Secure login with Firebase
-- **Role-Based Access** - Different dashboards for different user types
-- **Interactive Maps** - Visual representation of forest rights data
-- **Real-time Updates** - Live data synchronization
-- **Responsive UI** - Mobile-first design approach
-
-## 🚀 Deployment
-
-The application is automatically deployed to Netlify when changes are pushed to the main branch.
-
-### Netlify Configuration
-- **Build Command**: `npm run build`
-- **Publish Directory**: `dist`
-- **Node Version**: 18.x
-
-## 📊 Project Structure
-
+```bash
+npm run build
+# or
+yarn build
 ```
-src/
-├── components/          # Reusable UI components
-├── contexts/           # React context providers
-├── hooks/              # Custom React hooks
-├── lib/                # Utility functions and configurations
-├── pages/              # Page components
-├── data/               # Mock data and constants
-└── types/              # TypeScript type definitions
+
+## 🔧 Configuration
+
+### Firebase Setup
+1. Create a new Firebase project
+2. Enable Authentication with Email/Password and Google providers
+3. Update the Firebase configuration in `src/lib/firebase.ts`
+
+### Environment Variables
+Create a `.env` file in the root directory:
 ```
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+```
+
+## 📊 Data Structure
+
+### Village Data
+- **ID**: Unique identifier
+- **Name**: Village name
+- **State/District**: Geographic location
+- **Coordinates**: Latitude and longitude
+- **FRA Type**: Individual Forest Rights (IFR) or Community Forest Rights (CFR)
+- **Land Area**: Area in hectares
+- **Status**: Approved, Pending, or Rejected
+- **Population**: Village population
+- **Forest Cover**: Percentage of forest coverage
+
+### Alert System
+- **Title & Message**: Alert content
+- **Type**: Scheme, Announcement, Warning, or Update
+- **Priority**: High, Medium, or Low
+- **Target Audience**: All, Local, or Government users
+- **Geographic Scope**: State, district, or village level
 
 ## 🎨 Design System
 
-- **Color Scheme**: Professional blue and green palette
-- **Typography**: Clean, readable fonts
-- **Icons**: Lucide React icon library
-- **Layout**: Responsive grid system
-- **Components**: Consistent UI component library
+### Color Palette
+- **Primary**: Forest green theme
+- **Status Colors**: 
+  - Approved: Green
+  - Pending: Yellow/Orange
+  - Rejected: Red
+- **Dashboard**: Professional blue-gray theme
 
-## 🔐 Authentication
+### Typography
+- **Headings**: Bold, modern sans-serif
+- **Body**: Clean, readable font
+- **Code**: Monospace for technical content
 
-- **Firebase Authentication** - Primary authentication method
-- **Mock Authentication** - Fallback for development without Firebase
-- **Role-Based Access** - Government and Local user roles
-- **Secure Logout** - Proper session management
+### Components
+- Built with shadcn/ui component library
+- Fully accessible and keyboard navigable
+- Consistent design language throughout
 
-## 📈 Features in Detail
+## 🔒 Security Features
 
-### Map Integration
-- Interactive map with claim locations
-- Filter by state, district, and status
-- Click to view detailed claim information
-- Real-time data visualization
+- **Firebase Authentication**: Secure user authentication
+- **Role-based Access Control**: Different permissions for different user types
+- **Protected Routes**: Authentication required for sensitive pages
+- **Data Validation**: Input validation and sanitization
+- **HTTPS**: Secure data transmission
 
-### Analytics Dashboard
-- Total claims statistics
-- Approval rates and trends
-- Regional performance metrics
-- Interactive charts and graphs
+## 📱 Mobile Optimization
 
-### Complaint System
-- Submit complaints with priority levels
-- Track complaint status
-- Government response system
-- Email notifications
+- **Responsive Design**: Works on all screen sizes
+- **Touch-friendly**: Optimized for mobile interactions
+- **Offline Capability**: Basic functionality without internet
+- **Progressive Web App**: Installable on mobile devices
+
+## 🚀 Deployment
+
+### Netlify (Recommended)
+1. Connect your GitHub repository
+2. Set build command: `npm run build`
+3. Set publish directory: `dist`
+4. Configure environment variables
+
+### Vercel
+1. Import your project
+2. Set framework preset to Vite
+3. Configure build settings
+4. Deploy
+
+### Firebase Hosting
+1. Install Firebase CLI
+2. Run `firebase init hosting`
+3. Build and deploy with `firebase deploy`
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
-## 📝 License
+## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👨‍💻 Author
-
-**Victor Raj**
-- GitHub: [@Victorraj020](https://github.com/Victorraj020)
-- Project: [FRA Portal](https://github.com/Victorraj020/FRA)
-
-## 🙏 Acknowledgments
-
-- Forest Rights Act implementation teams
-- Open source community
-- React and TypeScript communities
-- All contributors and testers
+This project is built for Forest Rights Administration and is intended for government and community use.
 
 ## 📞 Support
 
-For support, email victorraj020@gmail.com or create an issue in the repository.
+For support and questions:
+- Create an issue in the repository
+- Contact the development team
+- Check the documentation
+
+## 🔮 Future Enhancements
+
+- **Real-time Collaboration**: Multi-user editing capabilities
+- **Advanced Analytics**: Machine learning insights
+- **Mobile App**: Native mobile applications
+- **API Integration**: Connect with government databases
+- **Multi-language Support**: Regional language support
+- **Offline Sync**: Full offline functionality
 
 ---
 
-**Built with ❤️ for Forest Rights Administration**
+**Built with ❤️ for Forest Rights Administration in India**
