@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +19,21 @@ import {
 } from 'lucide-react';
 
 const Landing: React.FC = () => {
+  const navigate = useNavigate();
+
+  // Hidden government login trigger: Ctrl+Alt+G, asks for passcode
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.altKey && (e.key === 'g' || e.key === 'G')) {
+        const pass = window.prompt('Enter government access passcode');
+        if (pass && pass === import.meta.env.VITE_GOV_PASSCODE) {
+          navigate('/login?role=government');
+        }
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [navigate]);
   const features = [
     {
       icon: MapPin,
@@ -84,7 +99,7 @@ const Landing: React.FC = () => {
                   variant="outline" 
                   className="border-white/30 text-white hover:bg-white/20 bg-white/5"
                 >
-                  Login
+                  User Login
                 </Button>
               </Link>
               <Link to="/signup">
@@ -136,7 +151,7 @@ const Landing: React.FC = () => {
                 size="lg" 
                 className="border-2 border-black text-black hover:bg-black hover:text-white px-8 py-4 text-lg font-semibold"
               >
-                Sign In
+                User Sign In
               </Button>
             </Link>
           </div>
@@ -310,7 +325,7 @@ const Landing: React.FC = () => {
                 size="lg" 
                 className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg font-semibold"
               >
-                Sign In to Existing Account
+                User Sign In
               </Button>
             </Link>
           </div>

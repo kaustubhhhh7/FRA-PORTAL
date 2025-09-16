@@ -13,6 +13,8 @@ interface DetailsDrawerProps {
   onClose: () => void;
   isMobile?: boolean;
   isGovernmentUser?: boolean;
+  // Added limitedMode to show only summary for anonymous/local users not logged in
+  limitedMode?: boolean;
   isEditing?: boolean;
   editedVillage?: Village | null;
   onEdit?: () => void;
@@ -27,6 +29,7 @@ const DetailsDrawer: React.FC<DetailsDrawerProps> = ({
   onClose, 
   isMobile = false,
   isGovernmentUser = false,
+  limitedMode = false,
   isEditing = false,
   editedVillage,
   onEdit,
@@ -138,10 +141,12 @@ const DetailsDrawer: React.FC<DetailsDrawerProps> = ({
                   <span className="text-muted-foreground">District</span>
                   <p className="font-medium">{village.district}</p>
                 </div>
-                <div>
-                  <span className="text-muted-foreground">Coordinates</span>
-                  <p className="font-medium text-xs">{village.coordinates[0].toFixed(4)}, {village.coordinates[1].toFixed(4)}</p>
-                </div>
+                {limitedMode ? null : (
+                  <div>
+                    <span className="text-muted-foreground">Coordinates</span>
+                    <p className="font-medium text-xs">{village.coordinates[0].toFixed(4)}, {village.coordinates[1].toFixed(4)}</p>
+                  </div>
+                )}
                 <div>
                   <span className="text-muted-foreground">FRA Type</span>
                   <p className="font-medium">
@@ -168,15 +173,18 @@ const DetailsDrawer: React.FC<DetailsDrawerProps> = ({
                   <p className="text-2xl font-bold text-primary">{village.population.toLocaleString()}</p>
                   <p className="text-xs text-muted-foreground">Population</p>
                 </div>
-                <div className="text-center p-3 bg-muted/30 rounded-lg">
-                  <p className="text-2xl font-bold text-secondary">{village.landArea}</p>
-                  <p className="text-xs text-muted-foreground">Hectares</p>
-                </div>
+                {limitedMode ? null : (
+                  <div className="text-center p-3 bg-muted/30 rounded-lg">
+                    <p className="text-2xl font-bold text-secondary">{village.landArea}</p>
+                    <p className="text-xs text-muted-foreground">Hectares</p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
 
           {/* Forest Cover */}
+          {limitedMode ? null : (
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center">
@@ -197,8 +205,10 @@ const DetailsDrawer: React.FC<DetailsDrawerProps> = ({
               </div>
             </CardContent>
           </Card>
+          )}
 
           {/* Timeline */}
+          {limitedMode ? null : (
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center">
@@ -232,6 +242,7 @@ const DetailsDrawer: React.FC<DetailsDrawerProps> = ({
               </div>
             </CardContent>
           </Card>
+          )}
 
           {/* Actions */}
           <Card>
@@ -249,7 +260,7 @@ const DetailsDrawer: React.FC<DetailsDrawerProps> = ({
               {!isGovernmentUser && (
                 <Button className="w-full justify-start" variant="outline">
                   <Edit className="w-4 h-4 mr-2" />
-                  Update Information
+                  {limitedMode ? 'Login to Update' : 'Update Information'}
                 </Button>
               )}
               <Button className="w-full justify-start" variant="outline">

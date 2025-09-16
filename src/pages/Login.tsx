@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,8 +14,11 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login, loginWithGoogle } = useAuth();
+  const { login, loginWithGoogle, updateUserRole } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const isGovernmentLogin = searchParams.get('role') === 'government';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +32,14 @@ const Login: React.FC = () => {
       setError('');
       setLoading(true);
       await login(email, password);
-      navigate('/');
+      // If government login flow, set role and route accordingly
+      if (isGovernmentLogin) {
+        await updateUserRole('government');
+        navigate('/government-dashboard');
+      } else {
+        // After login, go straight to user dashboard
+        navigate('/local-dashboard');
+      }
     } catch (error: any) {
       setError('Failed to log in. Please check your credentials.');
       console.error('Login error:', error);
@@ -43,7 +53,13 @@ const Login: React.FC = () => {
       setError('');
       setLoading(true);
       await loginWithGoogle();
-      navigate('/');
+      if (isGovernmentLogin) {
+        await updateUserRole('government');
+        navigate('/government-dashboard');
+      } else {
+        // After login, go straight to user dashboard
+        navigate('/local-dashboard');
+      }
     } catch (error: any) {
       console.error('Google login error:', error);
       

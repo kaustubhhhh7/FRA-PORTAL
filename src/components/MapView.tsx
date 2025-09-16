@@ -3,6 +3,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { mockVillages, Village, mockForestAreas, ForestArea } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/use-toast';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 // GeoJSON will be loaded dynamically
@@ -117,6 +118,8 @@ interface MapViewProps {
   };
   userType?: 'government' | 'local';
   showForests?: boolean;
+  // Added limitedMode to reduce details for anonymous/local users not logged in
+  limitedMode?: boolean;
 }
 
 const MapView: React.FC<MapViewProps> = ({ 
@@ -124,7 +127,8 @@ const MapView: React.FC<MapViewProps> = ({
   onForestSelect,
   selectedFilters = { state: 'all-states', district: 'all-districts', status: 'all-status' },
   userType = 'government',
-  showForests = false
+  showForests = false,
+  limitedMode = false
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
@@ -404,6 +408,7 @@ const MapView: React.FC<MapViewProps> = ({
       // Create popup content
       const popupContent = document.createElement('div');
       popupContent.className = 'p-3 min-w-[200px] sm:min-w-[240px] lg:min-w-[280px]';
+      // In limited mode, hide some sensitive fields (land area)
       popupContent.innerHTML = `
         <div class="space-y-3">
           <div class="flex items-center justify-between gap-2">
@@ -426,10 +431,11 @@ const MapView: React.FC<MapViewProps> = ({
               <span class="text-muted-foreground">FRA Type:</span>
               <p class="font-medium">${village.fraType}</p>
             </div>
+            ${limitedMode ? '' : `
             <div>
               <span class="text-muted-foreground">Land Area:</span>
               <p class="font-medium">${village.landArea} ha</p>
-            </div>
+            </div>`}
           </div>
         </div>
       `;
@@ -437,8 +443,25 @@ const MapView: React.FC<MapViewProps> = ({
       // Add button to popup
       const button = document.createElement('button');
       button.className = 'w-full bg-primary text-white py-1 px-3 rounded-md text-sm mt-3';
-      button.textContent = 'View Details';
-      button.onclick = () => onVillageSelect(village);
+      button.textContent = limitedMode ? 'View More' : 'View Details';
+      button.onclick = () => {
+        if (limitedMode) {
+          // Prompt login and redirect instead of opening details
+          try {
+            toast({
+              title: 'Login required',
+              description: 'Please sign in to view full village details.',
+            });
+          } catch (e) {
+            // noop if toast system not ready
+          }
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 300);
+          return;
+        }
+        onVillageSelect(village);
+      };
       popupContent.appendChild(button);
       
       // Bind popup to marker
