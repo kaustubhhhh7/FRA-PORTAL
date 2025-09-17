@@ -96,31 +96,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     console.log('Current user before logout:', currentUser);
     console.log('Current userRole before logout:', userRole);
     
-    // Clear everything immediately
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('mockUser');
-    console.log('LocalStorage cleared');
-    
-    // Clear state immediately
-    setCurrentUser(null);
-    setUserRole(null);
-    setLoading(true);
-    console.log('State cleared and loading set to true');
-    
-    // Try Firebase logout (but don't wait for it)
     try {
-      await signOut(auth);
-      console.log('Firebase logout successful');
-    } catch (firebaseError) {
-      console.log('Firebase logout failed (expected if not configured)');
-    }
-    
-    // Force re-render after a short delay
-    setTimeout(() => {
+      // Clear localStorage immediately
+      localStorage.removeItem('userRole');
+      localStorage.removeItem('mockUser');
+      console.log('LocalStorage cleared');
+      
+      // Clear all state immediately
+      setCurrentUser(null);
+      setUserRole(null);
       setLoading(false);
-      console.log('Loading set to false - should show landing page');
+      console.log('State cleared - user logged out');
+      
+      // Try Firebase logout (non-blocking)
+      try {
+        await signOut(auth);
+        console.log('Firebase logout successful');
+      } catch (error) {
+        console.log('Firebase logout failed (expected if not configured):', error);
+      }
+      
       console.log('=== LOGOUT COMPLETED ===');
-    }, 100);
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // Even if there's an error, ensure state is cleared
+      setCurrentUser(null);
+      setUserRole(null);
+      setLoading(false);
+      localStorage.removeItem('userRole');
+      localStorage.removeItem('mockUser');
+    }
   };
 
   const updateUserRole = async (role: UserRole) => {
@@ -134,11 +139,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log('Auth state changed:', user);
       setCurrentUser(user);
       if (user) {
         // Load user role from localStorage
         const savedRole = localStorage.getItem('userRole') as UserRole;
         setUserRole(savedRole);
+        console.log('Firebase user logged in, role:', savedRole);
       } else {
         // Check for mock user in localStorage
         const mockUserStr = localStorage.getItem('mockUser');
@@ -148,15 +155,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setCurrentUser(mockUser);
             const savedRole = localStorage.getItem('userRole') as UserRole;
             setUserRole(savedRole);
+            console.log('Mock user logged in, role:', savedRole);
           } catch (error) {
             console.error('Error parsing mock user:', error);
+            setCurrentUser(null);
             setUserRole(null);
             localStorage.removeItem('userRole');
             localStorage.removeItem('mockUser');
           }
         } else {
+          setCurrentUser(null);
           setUserRole(null);
-          localStorage.removeItem('userRole');
+          console.log('No user found, logged out');
         }
       }
       setLoading(false);

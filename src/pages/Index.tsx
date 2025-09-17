@@ -39,8 +39,12 @@ const Index = () => {
   const handleLogout = async () => {
     try {
       await logout();
+      // Force redirect to ensure logout completes
+      window.location.href = '/';
     } catch (error) {
       console.error('Failed to log out:', error);
+      // Force redirect even on error
+      window.location.href = '/';
     }
   };
 

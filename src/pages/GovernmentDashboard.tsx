@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import Header from '@/components/Header';
 import { 
   MapPin, 
   FileText, 
@@ -106,11 +107,8 @@ const GovernmentDashboard: React.FC = () => {
       await logout();
       console.log('GovernmentDashboard: Logout completed');
       
-      // Force redirect as backup
-      setTimeout(() => {
-        console.log('GovernmentDashboard: Forcing redirect to landing page');
-        window.location.href = '/';
-      }, 200);
+      // Force redirect immediately
+      window.location.href = '/';
       
     } catch (error) {
       console.error('GovernmentDashboard: Failed to log out:', error);
@@ -200,154 +198,14 @@ const GovernmentDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col h-screen">
-      {/* Header */}
-      <header className="bg-dashboard-nav text-dashboard-nav-foreground shadow-lg border-b">
-        <div className="container mx-auto px-4 sm:px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-lg flex items-center justify-center border-2 border-white">
-                  <MapPin className="w-4 h-4 sm:w-6 sm:h-6 text-black" />
-                </div>
-                <div>
-                  <h1 className="text-lg sm:text-2xl font-bold">FRA Portal</h1>
-                  <p className="text-xs sm:text-sm opacity-90 hidden sm:block">Forest Rights Administration</p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-1">
-              {[
-                { id: 'dashboard', label: 'Dashboard', icon: Grid3X3 },
-                { id: 'map', label: 'Map', icon: MapPin },
-                { id: 'forests', label: 'Forests', icon: TreePine },
-                { id: 'alerts', label: 'Alerts', icon: Bell },
-                { id: 'complaints', label: 'Complaints', icon: AlertTriangle },
-                { id: 'analytics', label: 'Analytics', icon: BarChart3 }
-              ].map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <Button
-                    key={tab.id}
-                    variant={activeTab === tab.id ? "secondary" : "outline"}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center space-x-2 font-semibold px-4 py-2 rounded-lg transition-all duration-200 ${
-                      activeTab === tab.id 
-                        ? 'bg-white text-black shadow-lg border-2 border-white hover:bg-gray-100' 
-                        : 'border-2 border-white/40 text-white hover:bg-white/20 hover:border-white/60 bg-white/10 hover:shadow-md'
-                    }`}
-                  >
-                    <Icon className={`w-4 h-4 ${
-                      activeTab === tab.id ? 'text-dashboard-nav' : 'text-white'
-                    }`} />
-                    <span>{tab.label}</span>
-                  </Button>
-                );
-              })}
-            </nav>
+      {/* Header with Sign In button */}
+      <Header 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab}
+        onToggleControlPanel={() => setIsControlPanelOpen(!isControlPanelOpen)}
+        isControlPanelOpen={isControlPanelOpen}
+      />
 
-            {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="border-2 border-white/40 text-white hover:bg-white/20 hover:border-white/60 px-3 py-2 rounded-lg"
-              >
-                {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-              </Button>
-            </div>
-
-            {/* Desktop User Info and Logout */}
-            <div className="hidden md:flex items-center space-x-2">
-              <Badge className="bg-white text-black">
-                <Shield className="w-3 h-3 mr-1" />
-                Government User
-              </Badge>
-              <div className="flex items-center space-x-2">
-                <User className="h-4 w-4 text-white" />
-                <span className="text-sm text-white">
-                  {currentUser?.displayName || currentUser?.email}
-                </span>
-              </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleLogout}
-                className="flex items-center space-x-1 border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-600 px-3 py-2 rounded-lg font-medium transition-all duration-200"
-              >
-                <LogOut className="h-4 w-4" />
-                <span>Logout</span>
-              </Button>
-            </div>
-          </div>
-
-          {/* Mobile Navigation Menu */}
-          {isMobileMenuOpen && (
-            <div className="md:hidden mt-4 pb-4 border-t border-white/20 bg-gray-900">
-              <div className="pt-4 space-y-2">
-                {/* Mobile Navigation Tabs */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
-                  {[
-                    { id: 'dashboard', label: 'Dashboard', icon: Grid3X3 },
-                    { id: 'map', label: 'Map', icon: MapPin },
-                    { id: 'forests', label: 'Forests', icon: TreePine },
-                    { id: 'alerts', label: 'Alerts', icon: Bell },
-                    { id: 'complaints', label: 'Complaints', icon: AlertTriangle },
-                    { id: 'analytics', label: 'Analytics', icon: BarChart3 }
-                  ].map((tab) => {
-                    const Icon = tab.icon;
-                    return (
-                      <Button
-                        key={tab.id}
-                        variant={activeTab === tab.id ? "default" : "outline"}
-                        onClick={() => {
-                          setActiveTab(tab.id);
-                          setIsMobileMenuOpen(false);
-                        }}
-                        className={`flex items-center space-x-1 sm:space-x-2 font-semibold px-2 sm:px-3 py-2 rounded-lg transition-all duration-200 ${
-                          activeTab === tab.id 
-                            ? 'bg-blue-600 text-white shadow-lg border-2 border-blue-500 hover:bg-blue-700' 
-                            : 'border-2 border-gray-300 text-gray-800 bg-white hover:bg-gray-100 hover:border-gray-400'
-                        }`}
-                      >
-                        <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
-                        <span className="text-xs sm:text-sm">{tab.label}</span>
-                      </Button>
-                    );
-                  })}
-                </div>
-
-                {/* Mobile User Info and Logout */}
-                <div className="flex flex-col space-y-2 pt-2 border-t border-gray-300">
-                  <div className="flex items-center space-x-2">
-                    <Badge className="bg-green-100 text-green-800 border border-green-200">
-                      <Shield className="w-3 h-3 mr-1" />
-                      Government User
-                    </Badge>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <User className="h-4 w-4 text-gray-700" />
-                    <span className="text-sm text-gray-700 font-medium">
-                      {currentUser?.displayName || currentUser?.email}
-                    </span>
-                  </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={handleLogout}
-                    className="flex items-center space-x-1 border-2 border-red-500 text-red-500 bg-white hover:bg-red-500 hover:text-white hover:border-red-600 px-3 py-2 rounded-lg font-medium transition-all duration-200"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    <span>Logout</span>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </header>
 
       {/* Main Content */}
       <div className="flex flex-1 h-[calc(100vh-80px)] relative">
@@ -432,17 +290,234 @@ const GovernmentDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* Map View */}
+        {/* Map View with Forest Options */}
         {activeTab === 'map' && (
-          <div className="flex-1 p-2 sm:p-4">
-            <MapView onVillageSelect={handleVillageSelect} selectedFilters={filters} userType="government" />
+          <div className="flex-1 flex flex-col">
+            {/* Forest Options Submenu */}
+            <div className="bg-white border-b px-4 py-2">
+              <div className="flex items-center space-x-4">
+                <h3 className="text-lg font-semibold text-gray-800">Map & Forest Areas</h3>
+                <div className="flex space-x-2">
+                  <Button
+                    variant={selectedForest ? "outline" : "default"}
+                    size="sm"
+                    onClick={() => setSelectedForest(null)}
+                    className="flex items-center space-x-1"
+                  >
+                    <MapPin className="w-4 h-4" />
+                    <span>Map View</span>
+                  </Button>
+                  <Button
+                    variant={selectedForest ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedForest({} as ForestArea)}
+                    className="flex items-center space-x-1"
+                  >
+                    <TreePine className="w-4 h-4" />
+                    <span>Forest Areas</span>
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
+            {/* Map or Forest Content */}
+            <div className="flex-1">
+              {!selectedForest ? (
+                <div className="h-full p-2 sm:p-4">
+                  <MapView onVillageSelect={handleVillageSelect} selectedFilters={filters} userType="government" />
+                </div>
+              ) : (
+                <div className="h-full">
+                  <ForestLayout onForestSelect={handleForestSelect} userType="government" />
+                </div>
+              )}
+            </div>
           </div>
         )}
 
-        {/* Forest Layout View */}
-        {activeTab === 'forests' && (
-          <div className="flex-1 h-full max-h-[calc(100vh-80px)]">
-            <ForestLayout onForestSelect={handleForestSelect} userType="government" />
+        {/* Dashboard/Home View */}
+        {activeTab === 'dashboard' && (
+          <div className="flex-1 p-4">
+            <div className="mb-6 flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground mb-2">FRA Implementation Status</h2>
+                <p className="text-muted-foreground">Status on implementation of FRA in Odisha as on 31-12-2024</p>
+              </div>
+              <Button
+                onClick={() => setIsEditing(true)}
+                className="bg-amber-600 hover:bg-amber-700 text-white"
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                Edit Data
+              </Button>
+            </div>
+            
+            {/* FRA Data Grid */}
+            <div className="bg-gradient-to-br from-amber-50 to-yellow-100 rounded-lg p-6 shadow-lg border border-amber-200">
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="border-b-2 border-amber-300">
+                      <th className="text-left py-3 px-4 font-semibold text-amber-800 bg-amber-100">Activities</th>
+                      <th className="text-center py-3 px-4 font-semibold text-amber-800 bg-amber-100">Individual Rights</th>
+                      <th className="text-center py-3 px-4 font-semibold text-amber-800 bg-amber-100">Community Rights</th>
+                      <th className="text-center py-3 px-4 font-semibold text-amber-800 bg-amber-100">Community Forest Resources Rights</th>
+                      <th className="text-center py-3 px-4 font-semibold text-amber-800 bg-amber-100">Total of Community</th>
+                      <th className="text-center py-3 px-4 font-semibold text-amber-800 bg-amber-100">Grand Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-amber-200 hover:bg-amber-50">
+                      <td className="py-3 px-4 font-medium text-amber-900">Claims Received</td>
+                      <td className="py-3 px-4 text-center text-amber-800">691,948</td>
+                      <td className="py-3 px-4 text-center text-amber-800">17,265</td>
+                      <td className="py-3 px-4 text-center text-amber-800">15,179</td>
+                      <td className="py-3 px-4 text-center text-amber-800">32,444</td>
+                      <td className="py-3 px-4 text-center font-semibold text-amber-900">724,392</td>
+                    </tr>
+                    <tr className="border-b border-amber-200 hover:bg-amber-50">
+                      <td className="py-3 px-4 font-medium text-amber-900">Claims Approved</td>
+                      <td className="py-3 px-4 text-center text-amber-800">468,133</td>
+                      <td className="py-3 px-4 text-center text-amber-800">6,323</td>
+                      <td className="py-3 px-4 text-center text-amber-800">4,903</td>
+                      <td className="py-3 px-4 text-center text-amber-800">11,226</td>
+                      <td className="py-3 px-4 text-center font-semibold text-amber-900">479,359</td>
+                    </tr>
+                    <tr className="border-b border-amber-200 hover:bg-amber-50">
+                      <td className="py-3 px-4 font-medium text-amber-900">Titles Distributed</td>
+                      <td className="py-3 px-4 text-center text-amber-800">461,475</td>
+                      <td className="py-3 px-4 text-center text-amber-800">4,784</td>
+                      <td className="py-3 px-4 text-center text-amber-800">3,992</td>
+                      <td className="py-3 px-4 text-center text-amber-800">8,776</td>
+                      <td className="py-3 px-4 text-center font-semibold text-amber-900">470,251</td>
+                    </tr>
+                    <tr className="border-b border-amber-200 hover:bg-amber-50">
+                      <td className="py-3 px-4 font-medium text-amber-900">Area Involved</td>
+                      <td className="py-3 px-4 text-center text-amber-800">673,850.89 Acres</td>
+                      <td className="py-3 px-4 text-center text-amber-800">278,154.02 Acres</td>
+                      <td className="py-3 px-4 text-center text-amber-800">458,734.83 Acres</td>
+                      <td className="py-3 px-4 text-center text-amber-800">736,888.85 Acres</td>
+                      <td className="py-3 px-4 text-center font-semibold text-amber-900">1,410,739.74 Acres</td>
+                    </tr>
+                    <tr className="border-b border-amber-200 hover:bg-amber-50">
+                      <td className="py-3 px-4 font-medium text-amber-900">Claims Rejected</td>
+                      <td className="py-3 px-4 text-center text-amber-800">144,104</td>
+                      <td className="py-3 px-4 text-center text-amber-800">404</td>
+                      <td className="py-3 px-4 text-center text-amber-800">128</td>
+                      <td className="py-3 px-4 text-center text-amber-800">532</td>
+                      <td className="py-3 px-4 text-center font-semibold text-amber-900">144,636</td>
+                    </tr>
+                    <tr className="border-b border-amber-200 hover:bg-amber-50">
+                      <td className="py-3 px-4 font-medium text-amber-900">Claims Pending</td>
+                      <td className="py-3 px-4 text-center text-amber-800">86,369</td>
+                      <td className="py-3 px-4 text-center text-amber-800">12,077</td>
+                      <td className="py-3 px-4 text-center text-amber-800">11,059</td>
+                      <td className="py-3 px-4 text-center text-amber-800">23,136</td>
+                      <td className="py-3 px-4 text-center font-semibold text-amber-900">109,505</td>
+                    </tr>
+                    <tr className="border-b border-amber-200 hover:bg-amber-50">
+                      <td className="py-3 px-4 font-medium text-amber-900">Correction of RoR & Maps</td>
+                      <td className="py-3 px-4 text-center text-amber-800">—</td>
+                      <td className="py-3 px-4 text-center text-amber-800">355,438</td>
+                      <td className="py-3 px-4 text-center text-amber-800">—</td>
+                      <td className="py-3 px-4 text-center text-amber-800">Demarcation made</td>
+                      <td className="py-3 px-4 text-center font-semibold text-amber-900">428,966</td>
+                    </tr>
+                    <tr className="border-b border-amber-200 hover:bg-amber-50">
+                      <td className="py-3 px-4 font-medium text-amber-900">Conversion Claims of Forest to Revenue Village</td>
+                      <td className="py-3 px-4 text-center text-amber-800">—</td>
+                      <td className="py-3 px-4 text-center text-amber-800">57</td>
+                      <td className="py-3 px-4 text-center text-amber-800">—</td>
+                      <td className="py-3 px-4 text-center text-amber-800">Declared Conversion of Forest to Revenue Village</td>
+                      <td className="py-3 px-4 text-center font-semibold text-amber-900">165</td>
+                    </tr>
+                    <tr className="hover:bg-amber-50">
+                      <td className="py-3 px-4 font-medium text-amber-900">Habitat Rights Recognition Claims</td>
+                      <td className="py-3 px-4 text-center text-amber-800">—</td>
+                      <td className="py-3 px-4 text-center text-amber-800">14</td>
+                      <td className="py-3 px-4 text-center text-amber-800">—</td>
+                      <td className="py-3 px-4 text-center text-amber-800">Habitat Rights Recognition Approved</td>
+                      <td className="py-3 px-4 text-center font-semibold text-amber-900">10</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            {/* Edit Modal for Government Users */}
+            {isEditing && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-bold text-gray-800">Edit FRA Implementation Data</h3>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsEditing(false)}
+                      className="text-gray-600 hover:text-gray-800"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <Alert>
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertDescription>
+                        You are editing official FRA implementation data. Changes will be visible to all users.
+                      </AlertDescription>
+                    </Alert>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Claims Received - Individual Rights</label>
+                        <Input defaultValue="691,948" className="w-full" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Claims Received - Community Rights</label>
+                        <Input defaultValue="17,265" className="w-full" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Claims Received - Community Forest Resources Rights</label>
+                        <Input defaultValue="15,179" className="w-full" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Claims Approved - Individual Rights</label>
+                        <Input defaultValue="468,133" className="w-full" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Claims Approved - Community Rights</label>
+                        <Input defaultValue="6,323" className="w-full" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Claims Approved - Community Forest Resources Rights</label>
+                        <Input defaultValue="4,903" className="w-full" />
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-end space-x-2 pt-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsEditing(false)}
+                        className="text-gray-600 hover:text-gray-800"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          // Here you would implement the save functionality
+                          setIsEditing(false);
+                          // Show success message
+                        }}
+                        className="bg-amber-600 hover:bg-amber-700 text-white"
+                      >
+                        <Save className="w-4 h-4 mr-2" />
+                        Save Changes
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
