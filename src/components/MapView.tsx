@@ -389,6 +389,23 @@ const MapView: React.FC<MapViewProps> = ({
   useEffect(() => {
     if (!mapInstanceRef.current) return;
     
+    // Zoom behavior based on selected filters
+    try {
+      if (selectedFilters.district && selectedFilters.district !== 'all-districts' &&
+          selectedFilters.state && selectedFilters.state !== 'all-states') {
+        // Zoom to selected district within the selected state
+        zoomToDistrict(selectedFilters.district, selectedFilters.state);
+      } else if (selectedFilters.state && selectedFilters.state !== 'all-states') {
+        // Zoom to selected state
+        zoomToState(selectedFilters.state);
+      } else {
+        // Reset to default view when filters are cleared
+        mapInstanceRef.current.setView([21.0, 81.0], 6);
+      }
+    } catch (e) {
+      // no-op if layers not yet ready; they load shortly after mount
+    }
+    
     // Clear existing village markers
     markersRef.current.forEach(marker => marker.remove());
     markersRef.current = [];

@@ -119,19 +119,47 @@ export const mockVillages: Village[] = [
 export const mockStates: State[] = [
   {
     name: 'Madhya Pradesh',
-    districts: ['Mandla', 'Chhindwara', 'Balaghat', 'Dindori']
+    districts: [
+      'Agar Malwa', 'Alirajpur', 'Anuppur', 'Ashoknagar', 'Balaghat', 'Barwani',
+      'Betul', 'Bhind', 'Bhopal', 'Burhanpur', 'Chhatarpur', 'Chhindwara',
+      'Damoh', 'Datia', 'Dewas', 'Dhar', 'Dindori', 'Guna', 'Gwalior', 'Harda',
+      'Hoshangabad (Narmadapuram)', 'Indore', 'Jabalpur', 'Jhabua', 'Katni',
+      'Khandwa (East Nimar)', 'Khargone (West Nimar)', 'Mandla', 'Mandsaur',
+      'Morena', 'Narsinghpur', 'Neemuch', 'Niwari', 'Panna', 'Raisen', 'Rajgarh',
+      'Ratlam', 'Rewa', 'Sagar', 'Satna', 'Sehore', 'Seoni', 'Shahdol', 'Shajapur',
+      'Sheopur', 'Shivpuri', 'Sidhi', 'Singrauli', 'Tikamgarh', 'Ujjain', 'Umaria',
+      'Vidisha', 'Chachaura', 'Maihar', 'Nagda'
+    ]
   },
   {
     name: 'Odisha',
-    districts: ['Rayagada', 'Kalahandi', 'Koraput', 'Malkangiri']
+    districts: [
+      'Angul', 'Balangir', 'Balasore (Baleswar)', 'Bargarh', 'Bhadrak', 'Boudh',
+      'Cuttack', 'Deogarh (Debagarh)', 'Dhenkanal', 'Gajapati', 'Ganjam',
+      'Jagatsinghpur', 'Jajpur', 'Jharsuguda', 'Kalahandi', 'Kandhamal',
+      'Kendrapara', 'Keonjhar (Kendujhar)', 'Khordha', 'Koraput', 'Malkangiri',
+      'Mayurbhanj', 'Nabarangpur', 'Nayagarh', 'Nuapada', 'Puri', 'Rayagada',
+      'Sambalpur', 'Subarnapur (Sonepur)', 'Sundargarh'
+    ]
   },
   {
     name: 'Telangana',
-    districts: ['Adilabad', 'Khammam', 'Warangal', 'Nizamabad']
+    districts: [
+      'Adilabad', 'Bhadradri Kothagudem', 'Hanumakonda', 'Hyderabad', 'Jagtial',
+      'Jangaon', 'Jayashankar Bhupalpally', 'Jogulamba Gadwal', 'Kamareddy',
+      'Karimnagar', 'Khammam', 'Kumuram Bheem Asifabad', 'Mahabubabad',
+      'Mahabubnagar', 'Mancherial', 'Medak', 'Medchal–Malkajgiri', 'Mulugu',
+      'Nagarkurnool', 'Nalgonda', 'Narayanpet', 'Nirmal', 'Nizamabad',
+      'Peddapalli', 'Rajanna Sircilla', 'Rangareddy', 'Sangareddy', 'Siddipet',
+      'Suryapet', 'Vikarabad', 'Wanaparthy', 'Warangal', 'Yadadri Bhuvanagiri'
+    ]
   },
   {
     name: 'Tripura',
-    districts: ['Dhalai', 'Gomati', 'Khowai', 'Sepahijala']
+    districts: [
+      'Dhalai', 'Gomati', 'Khowai', 'North Tripura', 'Sepahijala',
+      'South Tripura', 'Unakoti', 'West Tripura'
+    ]
   }
 ];
 
