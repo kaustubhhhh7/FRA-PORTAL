@@ -167,7 +167,7 @@ const LocalDashboard: React.FC = () => {
       {/* Main Content */}
       <div className="flex flex-1 h-[calc(100vh-80px)] relative">
         {/* Mobile Control Panel Toggle */}
-        {isMobile && (
+        {isMobile && !selectedForest && (
           <div className="fixed right-4 bottom-24 z-50">
             <Button
               onClick={() => setIsControlPanelOpen(!isControlPanelOpen)}
@@ -180,7 +180,7 @@ const LocalDashboard: React.FC = () => {
         )}
 
         {/* Mobile Control Panel Overlay */}
-        {isMobile && isControlPanelOpen && (
+        {isMobile && !selectedForest && isControlPanelOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={() => setIsControlPanelOpen(false)}>
             <div className="fixed left-0 top-0 h-full w-80 bg-white shadow-xl z-50" onClick={(e) => e.stopPropagation()}>
               <div className="p-4">
@@ -529,7 +529,7 @@ const LocalDashboard: React.FC = () => {
         )}
 
         {/* Desktop Control Panel */}
-        {!isMobile && (
+        {!isMobile && !selectedForest && (
           <div className="w-80 p-4 pl-2">
             <ControlPanel 
               selectedFilters={filters}

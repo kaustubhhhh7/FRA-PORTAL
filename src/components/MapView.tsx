@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { mockVillages, Village, mockForestAreas, ForestArea } from '@/data/mockData';
+import { loadRealForestAreas } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { Card } from '@/components/ui/card';
@@ -134,6 +135,7 @@ const MapView: React.FC<MapViewProps> = ({
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
   const forestMarkersRef = useRef<L.Marker[]>([]);
+  const forestDataRef = useRef<ForestArea[] | null>(null);
   const stateBoundariesRef = useRef<L.Polygon[]>([]);
   const districtBoundariesRef = useRef<L.Polygon[]>([]);
   
@@ -339,6 +341,15 @@ const MapView: React.FC<MapViewProps> = ({
         addStateBoundaries();
         addDistrictBoundaries();
       }, 200);
+
+      // Preload real forest data in background
+      loadRealForestAreas().then((data) => {
+        if (data && data.length > 0) {
+          forestDataRef.current = data;
+        }
+      }).catch(() => {
+        forestDataRef.current = null;
+      });
     }
     
     // Force a resize after a short delay to ensure proper rendering
@@ -492,7 +503,8 @@ const MapView: React.FC<MapViewProps> = ({
 
     // Add forest markers if showForests is true
     if (showForests && onForestSelect) {
-      mockForestAreas.forEach((forest) => {
+      const forests = forestDataRef.current && forestDataRef.current.length > 0 ? forestDataRef.current : mockForestAreas;
+      forests.forEach((forest) => {
         const marker = L.marker(forest.coordinates, {
           icon: createForestIcon(forest.type, forest.biodiversity)
         }).addTo(mapInstanceRef.current!);

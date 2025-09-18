@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { mockForestAreas, ForestArea } from '@/data/mockData';
+import { loadRealForestAreas } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -107,6 +108,7 @@ const ForestLayout: React.FC<ForestLayoutProps> = ({
   const districtBoundariesRef = useRef<L.Polygon[]>([]);
   
   const [searchTerm, setSearchTerm] = useState('');
+  const [forestAreas, setForestAreas] = useState<ForestArea[]>(mockForestAreas);
   const [selectedType, setSelectedType] = useState('all-types');
   const [selectedState, setSelectedState] = useState('all-states');
   const [selectedBiodiversity, setSelectedBiodiversity] = useState('all-biodiversity');
@@ -116,7 +118,7 @@ const ForestLayout: React.FC<ForestLayoutProps> = ({
 
   // Filter forests based on search and filters
   const getFilteredForests = () => {
-    return mockForestAreas.filter(forest => {
+    return forestAreas.filter(forest => {
       const matchesSearch = forest.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           forest.description.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesType = selectedType === 'all-types' || forest.type === selectedType;
@@ -192,6 +194,15 @@ const ForestLayout: React.FC<ForestLayoutProps> = ({
 
   // Initialize map
   useEffect(() => {
+    // Load real forest dataset
+    loadRealForestAreas().then((data) => {
+      if (data && data.length > 0) {
+        setForestAreas(data);
+      }
+    }).catch(() => {
+      // keep mocks on failure
+    });
+
     if (mapRef.current && !mapInstanceRef.current) {
       const map = L.map(mapRef.current).setView([21.0, 81.0], 6);
       mapInstanceRef.current = map;
@@ -313,7 +324,7 @@ const ForestLayout: React.FC<ForestLayoutProps> = ({
       marker.bindPopup(popupContent);
       marker.on('click', () => marker.openPopup());
     });
-  }, [searchTerm, selectedType, selectedState, selectedBiodiversity, onForestSelect]);
+  }, [searchTerm, selectedType, selectedState, selectedBiodiversity, onForestSelect, forestAreas]);
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -536,10 +547,10 @@ const ForestLayout: React.FC<ForestLayoutProps> = ({
       {/* Forest Details Modal - Responsive */}
       {selectedForest && showDetails && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
-            <div className="p-4 sm:p-6">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-5 sm:p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg sm:text-2xl font-bold pr-2">{selectedForest.name}</h2>
+                <h2 className="text-lg sm:text-xl font-bold pr-2">{selectedForest.name}</h2>
                 <Button
                   variant="outline"
                   size="sm"
@@ -549,94 +560,38 @@ const ForestLayout: React.FC<ForestLayoutProps> = ({
                   <X className="h-4 w-4" />
                 </Button>
               </div>
-              
-              <div className="space-y-4 sm:space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <h3 className="font-semibold text-sm text-gray-700 mb-2">Basic Information</h3>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-600">Type:</span>
-                        <Badge className={`text-xs ${getTypeColor(selectedForest.type)}`}>
-                          {selectedForest.type}
-                        </Badge>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">State:</span>
-                        <span className="font-medium text-right">{selectedForest.state}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">District:</span>
-                        <span className="font-medium text-right">{selectedForest.district}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Area:</span>
-                        <span className="font-medium">{selectedForest.area} hectares</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Forest Cover:</span>
-                        <span className="font-medium">{selectedForest.forestCover}%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Established:</span>
-                        <span className="font-medium">{selectedForest.establishedYear}</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-semibold text-sm text-gray-700 mb-2">Conservation Status</h3>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Biodiversity:</span>
-                        <span className={`font-medium ${getBiodiversityColor(selectedForest.biodiversity)}`}>
-                          {selectedForest.biodiversity}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Protection Status:</span>
-                        <span className={`font-medium ${getProtectionColor(selectedForest.protectionStatus)}`}>
-                          {selectedForest.protectionStatus}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Last Survey:</span>
-                        <span className="font-medium">{selectedForest.lastSurvey}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
+
+              <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <h3 className="font-semibold text-sm text-gray-700 mb-2">Description</h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">{selectedForest.description}</p>
+                  <span className="text-gray-600">State:</span>
+                  <p className="font-medium">{selectedForest.state}</p>
                 </div>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <h3 className="font-semibold text-sm text-gray-700 mb-2">Threats</h3>
-                    <ul className="text-sm text-gray-600 space-y-1">
-                      {selectedForest.threats.map((threat, index) => (
-                        <li key={index} className="flex items-start">
-                          <span className="w-2 h-2 bg-red-500 rounded-full mr-2 mt-1.5 flex-shrink-0"></span>
-                          <span>{threat}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h3 className="font-semibold text-sm text-gray-700 mb-2">Conservation Measures</h3>
-                    <ul className="text-sm text-gray-600 space-y-1">
-                      {selectedForest.conservationMeasures.map((measure, index) => (
-                        <li key={index} className="flex items-start">
-                          <span className="w-2 h-2 bg-green-500 rounded-full mr-2 mt-1.5 flex-shrink-0"></span>
-                          <span>{measure}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                <div>
+                  <span className="text-gray-600">District:</span>
+                  <p className="font-medium">{selectedForest.district}</p>
                 </div>
+                <div>
+                  <span className="text-gray-600">Area:</span>
+                  <p className="font-medium">{selectedForest.area} ha</p>
+                </div>
+                <div>
+                  <span className="text-gray-600">Forest Cover:</span>
+                  <p className="font-medium">{selectedForest.forestCover}%</p>
+                </div>
+                <div>
+                  <span className="text-gray-600">Biodiversity:</span>
+                  <p className={`font-medium ${getBiodiversityColor(selectedForest.biodiversity)}`}>{selectedForest.biodiversity}</p>
+                </div>
+                <div>
+                  <span className="text-gray-600">Protection:</span>
+                  <p className={`font-medium ${getProtectionColor(selectedForest.protectionStatus)}`}>{selectedForest.protectionStatus}</p>
+                </div>
+              </div>
+
+              <p className="text-sm text-gray-700 leading-relaxed mt-5">{selectedForest.description}</p>
+
+              <div className="mt-5">
+                <Button className="w-full">View Details</Button>
               </div>
             </div>
           </div>
