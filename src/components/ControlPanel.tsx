@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Search, Filter, TrendingUp, Users, MapPin, FileCheck, AlertCircle, X } from 'lucide-react';
 import { mockStates, mockStatistics, mockRecommendations } from '@/data/mockData';
+import { loadStateSchemes, type SchemeCard } from '@/lib/utils';
 
 interface ControlPanelProps {
   selectedFilters: {
@@ -22,6 +23,13 @@ interface ControlPanelProps {
 
 const ControlPanel: React.FC<ControlPanelProps> = ({ selectedFilters, onFilterChange, onClose, isMobile = false }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [schemes, setSchemes] = useState<SchemeCard[] | null>(null);
+
+  React.useEffect(() => {
+    loadStateSchemes().then((data) => {
+      setSchemes(data);
+    }).catch(() => setSchemes([]));
+  }, []);
 
   const pieData = [
     { name: 'Approved', value: mockStatistics.approvedClaims, color: 'hsl(var(--status-approved))' },
@@ -249,23 +257,40 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ selectedFilters, onFilterCh
           </TabsContent>
 
           <TabsContent value="recommendations" className="space-y-3 mt-2">
-            {mockRecommendations.map((rec) => (
-              <Card key={rec.id} className="p-3">
-                <div className="space-y-2">
-                  <div className="flex items-start justify-between">
-                    <h4 className="font-medium text-sm">{rec.title}</h4>
-                    <Badge className={`text-white text-xs ${getPriorityColor(rec.priority)}`}>
-                      {rec.priority}
-                    </Badge>
-                  </div>
-                  <p className="text-xs text-muted-foreground">{rec.description}</p>
-                  <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">{rec.villages} villages</span>
-                    <span className="text-secondary font-medium">{rec.estimatedImpact} impact</span>
-                  </div>
-                </div>
-              </Card>
-            ))}
+            {(() => {
+              const useReal = schemes && schemes.length > 0;
+              const base = useReal ? (schemes as SchemeCard[]) : mockRecommendations;
+              const filtered = useReal
+                ? base.filter((s: any) => selectedFilters.state === 'all-states' || !s.location || s.location === selectedFilters.state)
+                : base;
+              return filtered.slice(0, 30).map((item: any, idx: number) => {
+                const title = useReal ? (item.schemeName || item.title || 'Scheme') : item.title;
+                const priority = useReal ? (item.priority || 'Medium') : item.priority;
+                const description = useReal ? (item.description || item.sector || '') : item.description;
+                const leftFoot = useReal ? (item.location || item.implementingAgency || '—') : `${item.villages} villages`;
+                const officialUrl = useReal ? item.officialUrl : undefined;
+                const rightFoot = useReal ? (item.implementingAgency || '') : `${item.estimatedImpact} impact`;
+                return (
+                  <Card key={idx} className="p-3">
+                    <div className="space-y-2">
+                      <div className="flex items-start justify-between">
+                        <h4 className="font-medium text-sm">{title}</h4>
+                        <Badge className={`text-white text-xs ${getPriorityColor(priority)}`}>{priority}</Badge>
+                      </div>
+                      {description && <p className="text-xs text-muted-foreground line-clamp-3">{description}</p>}
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-muted-foreground truncate max-w-[55%]">{leftFoot}</span>
+                        {officialUrl ? (
+                          <a href={officialUrl} target="_blank" rel="noreferrer" className="text-secondary font-medium hover:underline">Official Page</a>
+                        ) : (
+                          <span className="text-secondary font-medium truncate max-w-[40%]">{rightFoot}</span>
+                        )}
+                      </div>
+                    </div>
+                  </Card>
+                );
+              });
+            })()}
           </TabsContent>
 
           <TabsContent value="documents" className="space-y-4 mt-2">
