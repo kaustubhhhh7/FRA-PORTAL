@@ -5,6 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Header from '@/components/Header';
+import FAQSection from '@/components/FAQSection';
+import ContactSection from '@/components/ContactSection';
+import Footer from '@/components/Footer';
 import { 
   MapPin, 
   FileText, 
@@ -154,18 +157,18 @@ const LocalDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col h-screen">
+    <div className="min-h-screen bg-background flex flex-col" id="top">
       {/* Header with Sign In button */}
       <Header 
         activeTab={activeTab} 
         onTabChange={setActiveTab}
-        onToggleControlPanel={() => setIsControlPanelOpen(!isControlPanelOpen)}
+        onToggleControlPanel={isMobile ? undefined : () => setIsControlPanelOpen(!isControlPanelOpen)}
         isControlPanelOpen={isControlPanelOpen}
       />
 
 
       {/* Main Content */}
-      <div className="flex flex-1 h-[calc(100vh-80px)] relative">
+      <div className="flex flex-1 relative" style={{ minHeight: '500px' }}>
         {/* Mobile Control Panel Toggle */}
         {isMobile && !selectedForest && (
           <div className="fixed right-4 bottom-24 z-50">
@@ -550,6 +553,13 @@ const LocalDashboard: React.FC = () => {
         // Pass limitedMode to hide sensitive fields when anonymous
         limitedMode={limitedMode}
       />
+
+      {/* FAQ and Contact below the main dashboard */}
+      <FAQSection />
+      <ContactSection />
+
+      {/* Global footer */}
+      <Footer />
     </div>
   );
 };
