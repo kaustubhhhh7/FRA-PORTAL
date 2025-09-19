@@ -8,6 +8,9 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { LogOut, User } from 'lucide-react';
+import FAQSection from '@/components/FAQSection';
+import ContactSection from '@/components/ContactSection';
+import Footer from '@/components/Footer';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -49,11 +52,11 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col h-screen">
+    <div className="min-h-screen bg-background flex flex-col h-screen" id="top">
       <Header 
         activeTab={activeTab} 
         onTabChange={setActiveTab}
-        onToggleControlPanel={() => setIsControlPanelOpen(!isControlPanelOpen)}
+        onToggleControlPanel={isMobile ? undefined : () => setIsControlPanelOpen(!isControlPanelOpen)}
         isControlPanelOpen={isControlPanelOpen}
       />
       
@@ -76,7 +79,7 @@ const Index = () => {
         </Button>
       </div>
       
-      <div className="flex flex-1 h-[calc(100vh-80px)] relative" style={{ minHeight: '500px', height: 'calc(100vh - 80px)' }}>
+      <div className="flex flex-1 relative" style={{ minHeight: '500px' }}>
         {/* Main Content Area */}
         <div className={`flex-1 p-2 sm:p-4 ${isMobile ? 'pr-2' : 'pr-2'}`}>
           <MapView onVillageSelect={handleVillageSelect} selectedFilters={filters} />
@@ -116,6 +119,13 @@ const Index = () => {
           isMobile={isMobile}
         />
       </div>
+
+      {/* FAQ and Contact sections below the map */}
+      <FAQSection />
+      <ContactSection />
+
+      {/* Global footer */}
+      <Footer />
     </div>
   );
 };
