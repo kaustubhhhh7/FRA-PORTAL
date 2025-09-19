@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Header from '@/components/Header';
+import { Input } from '@/components/ui/input';
 import { 
   MapPin, 
   FileText, 
@@ -22,7 +23,8 @@ import {
   Trash2,
   Bell,
   Menu,
-  TreePine
+  TreePine,
+  FileScan
 } from 'lucide-react';
 import MapView from '@/components/MapView';
 import ControlPanel from '@/components/ControlPanel';
@@ -251,9 +253,17 @@ const GovernmentDashboard: React.FC = () => {
         {/* Dashboard View */}
         {activeTab === 'dashboard' && (
           <div className="flex-1 p-4">
-            <div className="mb-6">
+            <div className="mb-6 flex items-center justify-between">
               <h2 className="text-2xl font-bold text-foreground mb-2">Government Dashboard</h2>
-              <p className="text-muted-foreground">Overview of forest rights administration</p>
+              <div className="flex items-center gap-3">
+                <Button
+                  onClick={() => { window.location.href = '/analyze-documents'; }}
+                  className="bg-black hover:bg-gray-800 text-white"
+                >
+                  <FileScan className="w-4 h-4 mr-2" />
+                  Analyze Documents
+                </Button>
+              </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

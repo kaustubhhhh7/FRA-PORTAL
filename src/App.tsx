@@ -14,6 +14,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
+import AnalyzeDocuments from "./pages/AnalyzeDocuments";
 
 const queryClient = new QueryClient();
 
@@ -96,6 +97,14 @@ const App = () => (
                   <Index />
                 </ProtectedRoute>
               } 
+            />
+            <Route 
+              path="/analyze-documents" 
+              element={
+                <ProtectedRoute requiredRole="government">
+                  <AnalyzeDocuments />
+                </ProtectedRoute>
+              }
             />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
