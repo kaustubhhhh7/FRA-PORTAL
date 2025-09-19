@@ -1,6 +1,7 @@
 [build]
+  base = "frontend"
   command = "npm run build"
-  publish = "dist"
+  publish = "frontend/dist"
 
 [build.environment]
   NODE_VERSION = "18"
@@ -11,9 +12,10 @@
   status = 200
 
 [dev]
+  base = "frontend"
   command = "npm run dev"
   port = 5173
-  publish = "dist"
+  publish = "frontend/dist"
 
 [[headers]]
   for = "/*"
