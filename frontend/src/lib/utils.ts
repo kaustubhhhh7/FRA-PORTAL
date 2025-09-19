@@ -7,10 +7,9 @@ export function cn(...inputs: ClassValue[]) {
 
 // Forest data loading utilities
 import type { ForestArea } from '@/data/mockData';
-// Use Vite asset import to get a served URL for the JSON at project root
-// utils.ts is in src/lib, so go up two levels to project root
-import forestDataUrl from '../../forest_protected_areas_four_states_enriched.json?url';
-import stateSchemesUrl from '../../state_schemes_cards.json?url';
+// Load from public/ so paths are stable after monorepo restructure
+import forestDataUrl from '/forest_protected_areas_four_states_enriched.json?url';
+import stateSchemesUrl from '/state_schemes_cards.json?url';
 
 type EnrichedForestRow = {
   wikidata_id: string;
