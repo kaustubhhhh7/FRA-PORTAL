@@ -1,6 +1,10 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-from werkzeug.utils import secure_filename
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from starlette.requests import Request
+from starlette.datastructures import UploadFile as StarletteUploadFile
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_500_INTERNAL_SERVER_ERROR
+from pathlib import Path
 import tempfile
 import os
 
@@ -13,8 +17,14 @@ except Exception as e:
     Image = None
     fitz = None
 
-app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "tif", "tiff", "bmp", "pdf"}
 
@@ -42,36 +52,37 @@ def allowed_file(filename: str) -> bool:
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route("/health", methods=["GET"])
-def health():
-    return jsonify({"status": "ok"})
+@app.get("/health")
+async def health() -> JSONResponse:
+    return JSONResponse({"status": "ok"})
 
 
-@app.route("/ocr", methods=["POST"])
-def ocr():
+@app.post("/ocr")
+async def ocr(file: UploadFile = File(...)) -> JSONResponse:
     try:
-        if 'file' not in request.files:
-            return jsonify({"error": "No file part"}), 400
-        file = request.files['file']
-        if file.filename == '':
-            return jsonify({"error": "No selected file"}), 400
-        if not allowed_file(file.filename):
-            return jsonify({"error": "Unsupported file type"}), 400
+        filename = file.filename or ""
+        if filename == "":
+            raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="No selected file")
+        if not allowed_file(filename):
+            raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail="Unsupported file type")
 
         if pytesseract is None or Image is None:
-            return jsonify({"error": "OCR Python dependencies not installed on server"}), 500
+            raise HTTPException(status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail="OCR Python dependencies not installed on server")
 
-        filename = secure_filename(file.filename)
+        safe_name = Path(filename).name
         with tempfile.TemporaryDirectory() as tmpdir:
-            path = os.path.join(tmpdir, filename)
-            file.save(path)
+            path = os.path.join(tmpdir, safe_name)
+            # Save uploaded file to disk
+            with open(path, "wb") as out:
+                content = await file.read()
+                out.write(content)
 
-            ext = filename.rsplit('.', 1)[1].lower()
+            ext = safe_name.rsplit('.', 1)[1].lower()
             text_chunks = []
 
             if ext == 'pdf':
                 if fitz is None:
-                    return jsonify({"error": "PDF processing dependency missing (PyMuPDF)"}), 500
+                    raise HTTPException(status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail="PDF processing dependency missing (PyMuPDF)")
                 doc = fitz.open(path)
                 for page_index in range(len(doc)):
                     page = doc.load_page(page_index)
@@ -88,17 +99,19 @@ def ocr():
                 text_chunks.append(pytesseract.image_to_string(Image.open(path)))
 
             text = "\n".join(chunk.strip() for chunk in text_chunks if chunk)
-            return jsonify({"text": text})
+            return JSONResponse({"text": text})
+    except HTTPException:
+        raise
     except Exception as e:
-        # Provide a helpful message if Tesseract binary is missing
         message = str(e)
         if 'tesseract is not installed' in message.lower() or 'tesseractnotfound' in message.lower():
             message += " | Please install Tesseract OCR and ensure it's on PATH. Windows: https://github.com/UB-Mannheim/tesseract/wiki"
-        return jsonify({"error": message}), 500
+        return JSONResponse({"error": message}, status_code=HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", "5001"))
-    app.run(host="0.0.0.0", port=port)
+    import uvicorn
+    port = int(os.environ.get("PORT", "8000"))
+    uvicorn.run("app:app", host="0.0.0.0", port=port, reload=True)
 
 

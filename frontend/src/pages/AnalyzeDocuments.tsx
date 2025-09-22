@@ -8,7 +8,7 @@ import Header from '@/components/Header';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ArrowLeft } from 'lucide-react';
 
-const OCR_API_URL = (import.meta as any)?.env?.VITE_OCR_API_URL || 'http://localhost:5001/ocr';
+const OCR_API_URL = (import.meta as any)?.env?.VITE_OCR_API_URL || 'http://localhost:8585/ocr';
 
 const AnalyzeDocuments: React.FC = () => {
 	const [activeTab, setActiveTab] = useState('dashboard');
