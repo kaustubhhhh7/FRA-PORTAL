@@ -34,12 +34,19 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  useAccent?: boolean; // when true and variant is default, use --lang-accent background
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, useAccent = true, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
-    return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />;
+    const useLangAccent = useAccent && (!variant || variant === 'default');
+    const style = useLangAccent ? { background: 'var(--lang-accent)', color: '#fff' } : undefined;
+    const mergedClass = cn(
+      buttonVariants({ variant, size, className }),
+      useLangAccent ? 'hover:opacity-90' : undefined
+    );
+    return <Comp className={mergedClass} style={style} ref={ref} {...props} />;
   },
 );
 Button.displayName = "Button";

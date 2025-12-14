@@ -25,7 +25,7 @@ setTimeout(() => setSubmitted(false), 3000);
 };
 
 return (
-<section id="contact" className="py-20 bg-gradient-to-br from-gray-50 to-white">
+  <section id="contact" className="py-20 bg-gradient-to-br from-gray-50 to-white scroll-mt-24 md:scroll-mt-32 z-0">
 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
 {/* Header Section */}
 <div className="text-center mb-16">

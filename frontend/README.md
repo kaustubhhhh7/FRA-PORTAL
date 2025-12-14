@@ -6,17 +6,24 @@ Getting Started
    npm install
 
 2) Configure env
-   Create frontend/.env with any overrides. Example:
-   VITE_OCR_API_URL=http://localhost:5001/ocr
+   Create frontend/.env (or .env.local) with:
+   VITE_OCR_API_URL=http://localhost:8000/ocr   # direct to FastAPI
+   # Or via Nginx reverse proxy
+   # VITE_OCR_API_URL=http://localhost/api/ocr
 
 3) Run dev server
    npm run dev
+   # Vite is configured to run on http://localhost:8080
 
 4) Build
    npm run build
 
+5) Preview production build (optional)
+   npm run preview
+
 Notes
 
-- Netlify config lives in frontend/netlify.toml and functions in frontend/netlify.
 - Public assets are under frontend/public.
 - App entry is frontend/src/main.tsx; routing in frontend/src/App.tsx.
+- Vite dev server host/port configured in frontend/vite.config.ts (port 8080).
+- Netlify functions example at frontend/netlify/functions.

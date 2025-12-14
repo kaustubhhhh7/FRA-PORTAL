@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,6 +21,7 @@ import {
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Hidden government login trigger: Ctrl+Alt+G, asks for passcode
   useEffect(() => {
@@ -37,41 +39,41 @@ const Landing: React.FC = () => {
   const features = [
     {
       icon: MapPin,
-      title: "Interactive Mapping",
-      description: "Real-time visualization of forest rights claims across Indian states with detailed geographic data."
+      title: t('landing.features.mapping.title'),
+      description: t('landing.features.mapping.desc')
     },
     {
       icon: BarChart3,
-      title: "Advanced Analytics",
-      description: "Comprehensive data visualization with charts, trends, and statistical insights."
+      title: t('landing.features.analytics.title'),
+      description: t('landing.features.analytics.desc')
     },
     {
       icon: Shield,
-      title: "Secure Authentication",
-      description: "Firebase-powered security with protected routes and user session management."
+      title: t('landing.features.security.title'),
+      description: t('landing.features.security.desc')
     },
     {
       icon: Users,
-      title: "User Management",
-      description: "Complete user registration, login, and profile management system."
+      title: t('landing.features.users.title'),
+      description: t('landing.features.users.desc')
     },
     {
       icon: Globe,
-      title: "State Highlighting",
-      description: "Special focus on key states: MP, Odisha, Telangana, and Tripura."
+      title: t('landing.features.states.title'),
+      description: t('landing.features.states.desc')
     },
     {
       icon: Smartphone,
-      title: "Mobile Responsive",
-      description: "Seamless experience across desktop, tablet, and mobile devices."
+      title: t('landing.features.mobile.title'),
+      description: t('landing.features.mobile.desc')
     }
   ];
 
   const stats = [
-    { label: "States Covered", value: "28+", icon: MapPin },
-    { label: "Villages Tracked", value: "10,000+", icon: Database },
-    { label: "Active Users", value: "500+", icon: Users },
-    { label: "Data Points", value: "50,000+", icon: BarChart3 }
+    { label: t('landing.stats.states'), value: "28+", icon: MapPin },
+    { label: t('landing.stats.villages'), value: "10,000+", icon: Database },
+    { label: t('landing.stats.users'), value: "500+", icon: Users },
+    { label: t('landing.stats.data'), value: "50,000+", icon: BarChart3 }
   ];
 
   return (
@@ -86,8 +88,8 @@ const Landing: React.FC = () => {
                   <MapPin className="w-4 h-4 sm:w-6 sm:h-6 text-black" />
                 </div>
                 <div>
-                  <h1 className="text-lg sm:text-2xl font-bold">FRA Portal</h1>
-                  <p className="text-xs sm:text-sm opacity-90 hidden sm:block">Forest Rights Administration</p>
+                  <h1 className="text-lg sm:text-2xl font-bold">{t('app.title')}</h1>
+                  <p className="text-xs sm:text-sm opacity-90 hidden sm:block">{t('app.subtitle')}</p>
                 </div>
               </div>
             </div>
@@ -99,14 +101,14 @@ const Landing: React.FC = () => {
                   variant="outline" 
                   className="border-white/30 text-white hover:bg-white/20 bg-white/5"
                 >
-                  User Login
+                  {t('landing.nav.userLogin')}
                 </Button>
               </Link>
               <Link to="/signup">
                 <Button 
                   className="bg-white text-dashboard-nav hover:bg-white/90 shadow-md"
                 >
-                  Sign Up
+                  {t('landing.nav.signUp')}
                 </Button>
               </Link>
             </div>
@@ -120,19 +122,18 @@ const Landing: React.FC = () => {
         <div className="relative container mx-auto text-center">
           <Badge className="mb-6 bg-black text-white border-0 px-4 py-2">
             <Leaf className="w-4 h-4 mr-2" />
-            Forest Rights Act Dashboard
+            {t('landing.hero.badge')}
           </Badge>
           
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-            Empowering Forest Communities
+            {t('landing.hero.headline1')}
             <span className="block text-black">
-              Through Digital Innovation
+              {t('landing.hero.headline2')}
             </span>
           </h1>
           
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-            A comprehensive platform for tracking, visualizing, and managing Forest Rights Act claims 
-            across India. Secure, interactive, and designed for government officials and community leaders.
+            {t('landing.hero.description')}
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -141,7 +142,7 @@ const Landing: React.FC = () => {
                 size="lg" 
                 className="bg-black hover:bg-gray-800 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                Get Started Free
+                {t('landing.cta.getStarted')}
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
@@ -151,7 +152,7 @@ const Landing: React.FC = () => {
                 size="lg" 
                 className="border-2 border-black text-black hover:bg-black hover:text-white px-8 py-4 text-lg font-semibold"
               >
-                User Sign In
+                {t('auth.signIn')}
               </Button>
             </Link>
           </div>
@@ -183,10 +184,10 @@ const Landing: React.FC = () => {
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Powerful Features for Forest Rights Management
+              {t('landing.features.title')}
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to efficiently manage and track forest rights claims across India
+              {t('landing.features.subtitle')}
             </p>
           </div>
           
@@ -218,10 +219,10 @@ const Landing: React.FC = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-foreground mb-4">
-              Built with Modern Technology
+              {t('landing.tech.title')}
             </h2>
             <p className="text-xl text-muted-foreground">
-              Leveraging cutting-edge tools for optimal performance and security
+              {t('landing.tech.subtitle')}
             </p>
           </div>
           
@@ -254,20 +255,20 @@ const Landing: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
-                Enterprise-Grade Security
+                {t('landing.security.title')}
               </h2>
               <p className="text-xl text-muted-foreground mb-8">
-                Your data is protected with industry-leading security measures and compliance standards.
+                {t('landing.security.subtitle')}
               </p>
               
               <div className="space-y-4">
                 {[
-                  "Firebase Authentication & Authorization",
-                  "End-to-end data encryption",
-                  "Secure API endpoints",
-                  "Regular security audits",
-                  "GDPR compliant data handling",
-                  "Role-based access control"
+                  t('landing.security.points.auth'),
+                  t('landing.security.points.encryption'),
+                  t('landing.security.points.api'),
+                  t('landing.security.points.audits'),
+                  t('landing.security.points.gdpr'),
+                  t('landing.security.points.rbac')
                 ].map((item, index) => (
                   <div key={index} className="flex items-center space-x-3">
                     <CheckCircle className="w-5 h-5 text-black flex-shrink-0" />
@@ -283,13 +284,13 @@ const Landing: React.FC = () => {
                   <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center mx-auto mb-6">
                     <Lock className="w-10 h-10 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-foreground mb-4">Secure by Design</h3>
+                  <h3 className="text-2xl font-bold text-foreground mb-4">{t('landing.security.card.title')}</h3>
                   <p className="text-muted-foreground mb-6">
-                    Built with security-first principles to protect sensitive forest rights data and user information.
+                    {t('landing.security.card.desc')}
                   </p>
                   <Badge className="bg-gray-100 text-gray-800 border-gray-200">
                     <Shield className="w-4 h-4 mr-2" />
-                    SOC 2 Compliant
+                    {t('landing.security.card.badge')}
                   </Badge>
                 </div>
               </Card>
@@ -302,11 +303,10 @@ const Landing: React.FC = () => {
       <section className="py-20 bg-black">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
-            Ready to Transform Forest Rights Management?
+            {t('landing.cta.title')}
           </h2>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Join government officials and community leaders who are already using FRA Portal 
-            to streamline forest rights administration across India.
+            {t('landing.cta.subtitle')}
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -315,7 +315,7 @@ const Landing: React.FC = () => {
                 size="lg" 
                 className="bg-white text-black hover:bg-gray-100 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                Start Your Free Trial
+                {t('landing.cta.startTrial')}
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
@@ -325,7 +325,7 @@ const Landing: React.FC = () => {
                 size="lg" 
                 className="border-2 border-white text-white hover:bg-white hover:text-black px-8 py-4 text-lg font-semibold"
               >
-                User Sign In
+                {t('auth.signIn')}
               </Button>
             </Link>
           </div>
@@ -342,39 +342,38 @@ const Landing: React.FC = () => {
                   <MapPin className="w-4 h-4 text-black" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold">FRA Portal</h3>
-                  <p className="text-sm opacity-90">Forest Rights Administration</p>
+                  <h3 className="text-xl font-bold">{t('app.title')}</h3>
+                  <p className="text-sm opacity-90">{t('app.subtitle')}</p>
                 </div>
               </div>
               <p className="text-sm opacity-80 max-w-md">
-                Empowering forest communities through digital innovation and comprehensive 
-                forest rights management solutions.
+                {t('landing.footer.tagline')}
               </p>
             </div>
             
             <div>
-              <h4 className="font-semibold mb-4">Product</h4>
+              <h4 className="font-semibold mb-4">{t('landing.footer.product.title')}</h4>
               <ul className="space-y-2 text-sm opacity-80">
-                <li>Features</li>
-                <li>Security</li>
-                <li>Pricing</li>
-                <li>Documentation</li>
+                <li>{t('landing.footer.product.features')}</li>
+                <li>{t('landing.footer.product.security')}</li>
+                <li>{t('landing.footer.product.pricing')}</li>
+                <li>{t('landing.footer.product.docs')}</li>
               </ul>
             </div>
             
             <div>
-              <h4 className="font-semibold mb-4">Support</h4>
+              <h4 className="font-semibold mb-4">{t('landing.footer.support.title')}</h4>
               <ul className="space-y-2 text-sm opacity-80">
-                <li>Help Center</li>
-                <li>Contact Us</li>
-                <li>Status</li>
-                <li>Community</li>
+                <li>{t('landing.footer.support.help')}</li>
+                <li>{t('landing.footer.support.contact')}</li>
+                <li>{t('landing.footer.support.status')}</li>
+                <li>{t('landing.footer.support.community')}</li>
               </ul>
             </div>
           </div>
           
           <div className="border-t border-white/20 mt-8 pt-8 text-center text-sm opacity-80">
-            <p>&copy; 2024 FRA Portal. All rights reserved. Built for Forest Rights Administration.</p>
+            <p>&copy; 2024 {t('app.title')}. {t('landing.footer.rights')}</p>
           </div>
         </div>
       </footer>

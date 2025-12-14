@@ -10,6 +10,10 @@ import type { ForestArea } from '@/data/mockData';
 // Load from public/ so paths are stable after monorepo restructure
 import forestDataUrl from '/forest_protected_areas_four_states_enriched.json?url';
 import stateSchemesUrl from '/state_schemes_cards.json?url';
+// Villages (ANGUL) dataset in repo root/frontend
+import angulVillagesGeoJsonUrl from '/village_points_from_names_ANGUL.geojson?url';
+// DSS village indicators (per-village decision support)
+// We resolve the file at runtime to avoid bundler resolution issues outside the app root.
 
 type EnrichedForestRow = {
   wikidata_id: string;
@@ -120,4 +124,161 @@ export async function loadStateSchemes(fetchImpl: typeof fetch = fetch): Promise
     console.error('loadStateSchemes error', e);
     return [];
   }
+}
+
+// Village data types and loader (ANGUL-only for now)
+export type RealVillage = {
+  id: string;
+  name: string;
+  state: string;
+  district: string;
+  coordinates: [number, number];
+  fraType?: 'IFR' | 'CFR' | '';
+  landArea?: number | null;
+  status?: 'Approved' | 'Pending' | 'Rejected' | '';
+  population?: number | null;
+  forestCover?: number | null;
+  lastUpdated?: string | null;
+};
+
+type AngulGeoJson = {
+  type: 'FeatureCollection';
+  features: Array<{
+    type: 'Feature';
+    properties: {
+      name?: string;
+      source?: string;
+      state?: string;
+      district?: string;
+      fraType?: string;
+      landArea?: number;
+      status?: string;
+      population?: number;
+      forestCover?: number;
+      lastUpdated?: string;
+    };
+    geometry: {
+      type: 'Point';
+      coordinates: [number, number]; // [lon, lat]
+    };
+  }>;
+};
+
+export async function loadAngulVillages(fetchImpl: typeof fetch = fetch): Promise<RealVillage[]> {
+  try {
+    const res = await fetchImpl(angulVillagesGeoJsonUrl);
+    if (!res.ok) throw new Error(`Failed to fetch ANGUL villages: ${res.status}`);
+    const gj: AngulGeoJson = await res.json();
+    const districtName = 'Angul';
+    const stateName = 'Odisha';
+
+    return (gj.features || [])
+      .filter((f) => f.geometry && f.geometry.type === 'Point' && Array.isArray(f.geometry.coordinates))
+      .map((f, idx) => {
+        const [lon, lat] = f.geometry.coordinates;
+        const p = f.properties || {};
+        const fra = (p.fraType || '').toUpperCase();
+        const status = (p.status || '').toLowerCase();
+        return {
+          id: `${p.name || 'v'}-${idx}`,
+          name: p.name || 'Unnamed',
+          state: p.state || stateName,
+          district: p.district || districtName,
+          coordinates: [lat, lon],
+          fraType: fra === 'IFR' || fra === 'CFR' ? (fra as any) : '',
+          landArea: typeof p.landArea === 'number' ? p.landArea : null,
+          status: status === 'approved' || status === 'pending' || status === 'rejected' ? (status.charAt(0).toUpperCase() + status.slice(1)) as any : '',
+          population: typeof p.population === 'number' ? p.population : null,
+          forestCover: typeof p.forestCover === 'number' ? p.forestCover : null,
+          lastUpdated: p.lastUpdated || null,
+        } as RealVillage;
+      });
+  } catch (e) {
+    console.error('loadAngulVillages error', e);
+    return [];
+  }
+}
+
+// DSS: Load villages with indicators and recommendations
+export type DSSVillage = RealVillage & {
+  villageCode?: number;
+  block?: string | null;
+  indicators?: {
+    fraBeneficiaries?: number | null;
+    pmKisanCount?: number | null;
+    pmKisanEligible?: number | null;
+    jjmCoveragePct?: number | null;
+    groundwaterIndex?: number | null;
+    waterStressScore?: number | null;
+    priorityScore?: number | null;
+    populationTotal?: number | null;
+    households?: number | null;
+  };
+  recommendations?: string[];
+};
+
+export async function loadDSSVillages(fetchImpl: typeof fetch = fetch): Promise<DSSVillage[]> {
+  try {
+    // Compute relative path from frontend dev server root to DSS file
+    // In dev, vite serves from project root; in prod, you can move the file to public/.
+    const url = (typeof window !== 'undefined')
+      ? `${window.location.origin}/fra_datset_main/data/village_indicators.geojson`
+      : '/fra_datset_main/data/village_indicators.geojson';
+    const res = await fetchImpl(url);
+    if (!res.ok) throw new Error(`Failed to fetch DSS villages: ${res.status}`);
+    const gj = await res.json();
+    const features = Array.isArray(gj?.features) ? gj.features : [];
+    return features
+      .filter((f: any) => f?.geometry?.type === 'Point' && Array.isArray(f.geometry.coordinates))
+      .map((f: any, idx: number) => {
+        const p = f.properties || {};
+        const [lon, lat] = f.geometry.coordinates;
+        return {
+          id: String(p.village_code ?? idx + 1),
+          villageCode: p.village_code ?? null,
+          name: String(p.village_name ?? 'Village'),
+          state: String(p.state ?? 'Odisha'),
+          district: String(p.district ?? 'Angul'),
+          block: p.block ?? null,
+          coordinates: [lat, lon],
+          fraType: '',
+          landArea: null,
+          status: '',
+          population: Number.isFinite(p.population_total) ? p.population_total : null,
+          forestCover: Number.isFinite(p.forest_cover) ? p.forest_cover : null,
+          lastUpdated: null,
+          indicators: {
+            fraBeneficiaries: Number.isFinite(p.fra_beneficiary_count) ? p.fra_beneficiary_count : null,
+            pmKisanCount: Number.isFinite(p.pm_kisan_count) ? p.pm_kisan_count : null,
+            pmKisanEligible: Number.isFinite(p.pm_kisan_eligible_count) ? p.pm_kisan_eligible_count : null,
+            jjmCoveragePct: Number.isFinite(p.jjm_coverage_pct) ? p.jjm_coverage_pct : null,
+            groundwaterIndex: Number.isFinite(p.groundwater_index) ? p.groundwater_index : null,
+            waterStressScore: Number.isFinite(p.water_stress_score) ? p.water_stress_score : null,
+            priorityScore: Number.isFinite(p.priority_score) ? p.priority_score : null,
+            populationTotal: Number.isFinite(p.population_total) ? p.population_total : null,
+            households: Number.isFinite(p.households) ? p.households : null,
+          },
+          recommendations: Array.isArray(p.recommendations) ? p.recommendations.map((r: any) => String(r)) : [],
+        } as DSSVillage;
+      });
+  } catch (e) {
+    console.error('loadDSSVillages error', e);
+    return [];
+  }
+}
+
+// Cached accessor so multiple components can reuse the loaded DSS data
+let __dssVillageCache: DSSVillage[] | null = null;
+let __dssVillagePromise: Promise<DSSVillage[]> | null = null;
+
+export function getDSSVillagesCached(fetchImpl: typeof fetch = fetch): Promise<DSSVillage[]> {
+  if (__dssVillageCache) return Promise.resolve(__dssVillageCache);
+  if (__dssVillagePromise) return __dssVillagePromise;
+  __dssVillagePromise = loadDSSVillages(fetchImpl).then((rows) => {
+    __dssVillageCache = rows;
+    return rows;
+  }).finally(() => {
+    __dssVillagePromise = null;
+  });
+  return __dssVillagePromise;
 }

@@ -1,12 +1,22 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { MapPin, ArrowUp, ExternalLink, Heart, Github, Twitter, Linkedin, Mail } from 'lucide-react';
+import { MapPin, ArrowUp, ExternalLink, Heart, Github, Twitter, Linkedin, Mail, FileText, Shield, Activity } from 'lucide-react';
 
 const Footer: React.FC = () => {
 const [isVisible, setIsVisible] = useState(false);
 const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+const [showScrollTop, setShowScrollTop] = useState(false);
+const [email, setEmail] = useState('');
 
 useEffect(() => {
 setIsVisible(true);
+}, []);
+
+useEffect(() => {
+const handleScroll = () => {
+setShowScrollTop(window.scrollY > 300);
+};
+window.addEventListener('scroll', handleScroll);
+return () => window.removeEventListener('scroll', handleScroll);
 }, []);
 
 const scrollToTop = () => {
@@ -20,6 +30,16 @@ const scrollToSection = (sectionId: string) => {
 const element = document.getElementById(sectionId);
 if (element) {
 element.scrollIntoView({ behavior: 'smooth' });
+}
+};
+
+const handleNewsletterSubmit = (e: React.FormEvent) => {
+e.preventDefault();
+if (email) {
+// Here you would typically send the email to your backend
+console.log('Newsletter signup:', email);
+alert('Thank you for subscribing to our newsletter!');
+setEmail('');
 }
 };
 
@@ -52,29 +72,61 @@ FRA Portal
 Empowering forest communities through digital innovation and comprehensive forest rights management solutions.
 </p>
 
+{/* Newsletter Signup */}
+<div className="mb-6">
+<h5 className="text-white font-semibold mb-3">Stay Updated</h5>
+<form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-2">
+<input
+type="email"
+value={email}
+onChange={(e) => setEmail(e.target.value)}
+placeholder="Enter your email"
+className="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-white focus:ring-2 focus:ring-white focus:ring-opacity-20 transition-all duration-300"
+required
+/>
+<button
+type="submit"
+className="px-6 py-2 bg-gradient-to-r from-white to-gray-200 text-black font-semibold rounded-lg hover:from-gray-200 hover:to-white transition-all duration-300 hover:scale-105"
+>
+Subscribe
+</button>
+</form>
+<p className="text-xs text-gray-400 mt-2">Get updates on forest rights and community initiatives</p>
+</div>
+
 {/* Social Links */}
 <div className="flex space-x-4">
 <a 
-href="#" 
+href="https://github.com/fra-portal" 
+target="_blank" 
+rel="noopener noreferrer"
 className="w-10 h-10 bg-gray-800 hover:bg-white hover:text-black rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg group"
+title="Visit our GitHub repository"
 >
 <Github className="w-5 h-5 group-hover:scale-110 transition-transform" />
 </a>
 <a 
-href="#" 
+href="https://twitter.com/fraportal" 
+target="_blank" 
+rel="noopener noreferrer"
 className="w-10 h-10 bg-gray-800 hover:bg-white hover:text-black rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg group"
+title="Follow us on Twitter"
 >
 <Twitter className="w-5 h-5 group-hover:scale-110 transition-transform" />
 </a>
 <a 
-href="#" 
+href="https://linkedin.com/company/fra-portal" 
+target="_blank" 
+rel="noopener noreferrer"
 className="w-10 h-10 bg-gray-800 hover:bg-white hover:text-black rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg group"
+title="Connect with us on LinkedIn"
 >
 <Linkedin className="w-5 h-5 group-hover:scale-110 transition-transform" />
 </a>
 <a 
-href="mailto:support@fraportal.example" 
+href="mailto:support@fraportal.gov.in" 
 className="w-10 h-10 bg-gray-800 hover:bg-white hover:text-black rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg group"
+title="Contact us via email"
 >
 <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />
 </a>
@@ -118,15 +170,32 @@ Resources
 </h4>
 <ul className="space-y-3">
 {[
-{ name: 'Documentation', href: '#docs' },
-{ name: 'Security', href: '#security' },
-{ name: 'Status', href: '#status' }
+{ 
+  name: 'Documentation', 
+  href: '/docs', 
+  icon: FileText,
+  description: 'User guides and API documentation'
+},
+{ 
+  name: 'Security', 
+  href: '/security', 
+  icon: Shield,
+  description: 'Security policies and data protection'
+},
+{ 
+  name: 'Status', 
+  href: '/status', 
+  icon: Activity,
+  description: 'System status and uptime monitoring'
+}
 ].map((item) => (
 <li key={item.name}>
 <a 
 href={item.href}
 className="text-gray-300 hover:text-white hover:translate-x-2 transition-all duration-300 flex items-center group"
+title={item.description}
 >
+<item.icon className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
 <span className="group-hover:text-white transition-colors duration-300">
 {item.name}
 </span>
@@ -155,12 +224,15 @@ className="text-gray-300 hover:text-white hover:translate-x-2 transition-all dur
 </div>
 
 {/* Scroll to Top Button */}
+{showScrollTop && (
 <button
 onClick={scrollToTop}
-className="fixed bottom-8 right-8 w-12 h-12 bg-gradient-to-r from-black to-gray-800 hover:from-gray-800 hover:to-black text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 z-50 group"
+className="fixed bottom-8 right-8 w-12 h-12 bg-gradient-to-r from-black to-gray-800 hover:from-gray-800 hover:to-black text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 z-50 group animate-in slide-in-from-bottom-4"
+title="Back to top"
 >
 <ArrowUp className="w-6 h-6 mx-auto group-hover:animate-bounce" />
 </button>
+)}
 </footer>
 );
 };

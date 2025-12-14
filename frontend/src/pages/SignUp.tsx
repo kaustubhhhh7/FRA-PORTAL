@@ -41,7 +41,8 @@ const SignUp: React.FC = () => {
       setError('');
       setLoading(true);
       await signup(email, password, displayName);
-      navigate('/');
+      // Navigate to local dashboard for new users (normal role)
+      navigate('/local-dashboard');
     } catch (error: any) {
       setError('Failed to create an account. Email may already be in use.');
       console.error('Signup error:', error);
@@ -55,7 +56,8 @@ const SignUp: React.FC = () => {
       setError('');
       setLoading(true);
       await loginWithGoogle();
-      navigate('/');
+      // Navigate to local dashboard for new users (normal role)
+      navigate('/local-dashboard');
     } catch (error: any) {
       setError('Failed to sign in with Google. Please try again.');
       console.error('Google login error:', error);

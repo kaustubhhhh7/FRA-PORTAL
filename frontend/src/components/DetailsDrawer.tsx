@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -6,6 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
 import { X, MapPin, Users, TreePine, Calendar, FileText, Download, Edit, Save, CheckCircle, Clock, XCircle } from 'lucide-react';
 import { Village } from '@/data/mockData';
+import { getDSSVillagesCached, type DSSVillage } from '@/lib/utils';
 
 interface DetailsDrawerProps {
   village: Village | null;
@@ -37,6 +38,24 @@ const DetailsDrawer: React.FC<DetailsDrawerProps> = ({
   onCancel,
   onStatusChange
 }) => {
+  const [dss, setDss] = useState<DSSVillage | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    if (village) {
+      getDSSVillagesCached().then((rows) => {
+        if (!mounted) return;
+        const found = rows.find(r => String(r.id) === String(village.id) || (r.name === village.name && r.district === village.district));
+        setDss(found || null);
+      }).catch(() => {
+        if (mounted) setDss(null);
+      });
+    } else {
+      setDss(null);
+    }
+    return () => { mounted = false; };
+  }, [village?.id, village?.name, village?.district]);
+
   if (!village) return null;
 
   const displayVillage = isEditing && editedVillage ? editedVillage : village;
@@ -170,7 +189,7 @@ const DetailsDrawer: React.FC<DetailsDrawerProps> = ({
             <CardContent className="space-y-4">
               <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
                 <div className="text-center p-3 bg-muted/30 rounded-lg">
-                  <p className="text-2xl font-bold text-primary">{village.population.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-primary">{village.population.toLocaleString()}</p>
                   <p className="text-xs text-muted-foreground">Population</p>
                 </div>
                 {limitedMode ? null : (
@@ -179,6 +198,15 @@ const DetailsDrawer: React.FC<DetailsDrawerProps> = ({
                     <p className="text-xs text-muted-foreground">Hectares</p>
                   </div>
                 )}
+              {dss?.indicators?.jjmCoveragePct != null && (
+                <div className="col-span-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>JJM Coverage</span>
+                    <span className="font-medium">{Math.round(dss.indicators.jjmCoveragePct)}%</span>
+                  </div>
+                  <Progress value={Math.max(0, Math.min(100, dss.indicators.jjmCoveragePct))} className="h-2" />
+                </div>
+              )}
               </div>
             </CardContent>
           </Card>
@@ -205,6 +233,25 @@ const DetailsDrawer: React.FC<DetailsDrawerProps> = ({
               </div>
             </CardContent>
           </Card>
+          )}
+
+          {/* DSS Recommendations */}
+          {dss?.recommendations && dss.recommendations.length > 0 && (
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center">
+                  <FileText className="w-4 h-4 mr-2" />
+                  DSS Recommendations
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="list-disc pl-5 text-sm space-y-1">
+                  {dss.recommendations.slice(0, 5).map((rec, i) => (
+                    <li key={i}>{rec}</li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
           )}
 
           {/* Timeline */}
@@ -253,19 +300,34 @@ const DetailsDrawer: React.FC<DetailsDrawerProps> = ({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button className="w-full justify-start" variant="outline">
+              <Button className="w-full justify-start" variant="outline" onClick={() => {
+                if (limitedMode) {
+                  window.location.href = '/login';
+                  return;
+                }
+              }}>
                 <Download className="w-4 h-4 mr-2" />
-                Download Records
+                {limitedMode ? 'Login to Download' : 'Download Records'}
               </Button>
               {!isGovernmentUser && (
-                <Button className="w-full justify-start" variant="outline">
+                <Button className="w-full justify-start" variant="outline" onClick={() => {
+                  if (limitedMode) {
+                    window.location.href = '/login';
+                    return;
+                  }
+                }}>
                   <Edit className="w-4 h-4 mr-2" />
                   {limitedMode ? 'Login to Update' : 'Update Information'}
                 </Button>
               )}
-              <Button className="w-full justify-start" variant="outline">
+              <Button className="w-full justify-start" variant="outline" onClick={() => {
+                if (limitedMode) {
+                  window.location.href = '/login';
+                  return;
+                }
+              }}>
                 <FileText className="w-4 h-4 mr-2" />
-                View Documents
+                {limitedMode ? 'Login to View Documents' : 'View Documents'}
               </Button>
             </CardContent>
           </Card>

@@ -6,6 +6,105 @@ A comprehensive platform for tracking, visualizing, and managing Forest Rights A
 
 The FRA Portal is a sophisticated web application designed to streamline forest rights management across India. It provides interactive mapping, real-time data visualization, and comprehensive administrative tools for managing Forest Rights Act claims at both government and local community levels.
 
+## 🧭 Use Case Diagram
+
+```mermaid
+flowchart LR
+    %% Actors
+    A["👤 Local Community User\n(Claimant / Village Leader)"]
+    G["👤 Government Official\n(Admin/Reviewer)"]
+    N["👤 NGO / Department User\n(Restricted Access)"]
+
+    %% Systems
+    subgraph FRA Portal
+      direction LR
+      UC1((Register / Login))
+      UC2((Select Role))
+      UC3((View Map & Analytics))
+      UC4((Submit/Track FRA Application))
+      UC5((Upload & Manage Documents))
+      UC6((Receive / Manage Alerts))
+      UC7((Review & Verify Applications))
+      UC8((Generate Reports))
+      UC9((AI: Analyze Documents))
+      UC10((AI: Validate Application))
+      UC11((User Management))
+    end
+
+    %% Associations
+    A --- UC1
+    A --- UC2
+    A --- UC3
+    A --- UC4
+    A --- UC5
+    A --- UC6
+
+    G --- UC1
+    G --- UC2
+    G --- UC3
+    G --- UC6
+    G --- UC7
+    G --- UC8
+    G --- UC11
+
+    N --- UC1
+    N --- UC2
+    N --- UC3
+    N --- UC6
+
+    %% AI Services used by multiple cases
+    UC5 -. uses .- UC9
+    UC4 -. uses .- UC10
+    UC7 -. uses .- UC9
+```
+
+## 🔄 User Flow Diagram
+
+```mermaid
+flowchart TD
+    L[Landing Page] --> RS{Logged in?}
+    RS -- No --> LG[Login / Sign Up]
+    LG --> RL[Select Role]
+    RS -- Yes --> RL
+
+    RL -->|Government| GD[Government Dashboard]
+    RL -->|Local Community| LD[Local Community Dashboard]
+    RL -->|NGO/Dept| ND[Department Dashboard]
+
+    %% Government flows
+    GD --> GM[Map & Analytics]
+    GD --> GA[Alerts Management]
+    GD --> GR[Review Applications]
+    GD --> GDoc[Verify Documents]
+    GD --> GRep[Generate Reports]
+    GR --> GAI[AI Validate Application]
+    GDoc --> GAI2[AI Analyze Documents]
+
+    %% Local flows
+    LD --> LM[View Village Map]
+    LD --> LA[Submit/Track Application]
+    LD --> LDoc[Upload Documents]
+    LD --> LAl[View Alerts]
+    LDoc --> LAI[AI Analyze Documents]
+
+    %% NGO flows
+    ND --> NM[View Map (Restricted)]
+    ND --> NAl[View Alerts]
+
+    %% Global
+    subgraph Global
+      direction LR
+      PR[Protected Routes]
+      RBAC[Role-Based Access Control]
+    end
+
+    LG --> PR
+    RL --> RBAC
+    GD --> PR
+    LD --> PR
+    ND --> PR
+```
+
 ## 🚀 Key Features
 
 ### 🗺️ Interactive Mapping
@@ -138,12 +237,13 @@ The application focuses on four key Indian states with comprehensive forest righ
 3. **Telangana** - Southern state with diverse forest ecosystems
 4. **Tripura** - Northeastern state with rich biodiversity
 
-## 🚀 Getting Started
+## 🚀 Getting Started (Monorepo Overview)
 
 ### Prerequisites
 - Node.js (v18 or higher)
 - npm or yarn package manager
-- Firebase project setup
+- Python 3.11+
+- Firebase project setup (for auth)
 
 ### Installation
 
@@ -153,29 +253,36 @@ The application focuses on four key Indian states with comprehensive forest righ
    cd fra-vista-dash-main
    ```
 
-2. **Install dependencies**
+2. **Install frontend dependencies**
    ```bash
+   cd FRA/frontend
    npm install
-   # or
-   yarn install
    ```
 
 3. **Set up Firebase**
    - Create a Firebase project
    - Enable Authentication (Email/Password and Google)
-   - Copy your Firebase config to `src/lib/firebase.ts`
+   - Copy your Firebase config to `FRA/frontend/src/lib/firebase.ts`
 
-4. **Start development server**
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
+4. **Start services in dev**
+   - Backend (OCR):
+     ```bash
+     cd FRA/backend/ocr_service
+     pip install -r requirements.txt
+     set PORT=8000   # on Windows (or export PORT=8000 on Unix)
+     python app.py
+     ```
+   - Frontend (Vite):
+     ```bash
+     cd FRA/frontend
+     npm run dev
+     ```
 
 5. **Open your browser**
-   Navigate to `http://localhost:8080`
+   - Frontend: `http://localhost:8080`
+   - API docs: `http://localhost:8000/docs` (or via Nginx at `http://localhost/docs`)
 
-### Build for Production
+### Build for Production (Frontend)
 
 ```bash
 npm run build
@@ -188,14 +295,18 @@ yarn build
 ### Firebase Setup
 1. Create a new Firebase project
 2. Enable Authentication with Email/Password and Google providers
-3. Update the Firebase configuration in `src/lib/firebase.ts`
+3. Update the Firebase configuration in `FRA/frontend/src/lib/firebase.ts`
 
 ### Environment Variables
-Create a `.env` file in the root directory:
+Create a `.env` file in `FRA/frontend`:
 ```
 VITE_FIREBASE_API_KEY=your_api_key
 VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=your_project_id
+# OCR API (choose one)
+VITE_OCR_API_URL=http://localhost:8000/ocr
+# or via Nginx reverse proxy:
+# VITE_OCR_API_URL=http://localhost/api/ocr
 ```
 
 ## 📊 Data Structure
@@ -268,6 +379,11 @@ VITE_FIREBASE_PROJECT_ID=your_project_id
 4. Deploy
 
 ### Firebase Hosting
+### Nginx Reverse Proxy (Optional)
+If you want to proxy the backend through Nginx:
+1. Go to `FRA/nginx`
+2. Start with Docker Compose or the provided scripts
+3. Frontend continues on port 8080, API proxied at `/api/*`
 1. Install Firebase CLI
 2. Run `firebase init hosting`
 3. Build and deploy with `firebase deploy`

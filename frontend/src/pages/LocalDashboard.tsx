@@ -1,13 +1,15 @@
 import React, { useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import Header from '@/components/Header';
 import FAQSection from '@/components/FAQSection';
 import ContactSection from '@/components/ContactSection';
-import Footer from '@/components/Footer';
+import FRAApplicationForm from '@/components/FRAApplicationForm';
+import FRAApplicationList from '@/components/FRAApplicationList';
+import RoleSpecificDashboard from '@/components/RoleSpecificDashboard';
 import { 
   MapPin, 
   FileText, 
@@ -24,26 +26,107 @@ import {
   Bell,
   Menu,
   X,
-  TreePine  
+  TreePine,
+  FileCheck,
+  Edit
 } from 'lucide-react';
 import MapView from '@/components/MapView';
 import ControlPanel from '@/components/ControlPanel';
 import DetailsDrawer from '@/components/DetailsDrawer';
 import AlertViewer from '@/components/AlertViewer';
 import ForestLayout from '@/components/ForestLayout';
+import PhotoSlider from '@/components/PhotoSlider';
 import { Village, Alert as AlertType, ForestArea, mockAlerts } from '@/data/mockData';
+import { FRAApplication } from '@/components/FRAApplicationForm';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
+import Groundwater3D from '@/components/Groundwater3D';
 
 const LocalDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('map');
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedVillage, setSelectedVillage] = useState<Village | null>(null);
   const [selectedForest, setSelectedForest] = useState<ForestArea | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isControlPanelOpen, setIsControlPanelOpen] = useState(false);
   const [showComplaintForm, setShowComplaintForm] = useState(false);
+  const [showFRAForm, setShowFRAForm] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [alerts] = useState<AlertType[]>(mockAlerts);
+  const [fraApplications, setFraApplications] = useState<FRAApplication[]>([
+    {
+      id: 'FRA-001',
+      applicantName: 'Rajesh Kumar',
+      village: 'Kendupali',
+      district: 'Koraput',
+      state: 'Odisha',
+      landArea: '2.5 acres',
+      landType: 'individual',
+      claimType: 'individual_forest_rights',
+      description: 'Traditional forest rights claim for agricultural land used by family for generations.',
+      supportingDocuments: [],
+      status: 'submitted',
+      priority: 'medium',
+      submittedAt: new Date('2024-01-10')
+    },
+    {
+      id: 'FRA-002',
+      applicantName: 'Community of Bhayender',
+      village: 'Bhayender',
+      district: 'Nalaspora',
+      state: 'Madhya Pradesh',
+      landArea: '15.0 acres',
+      landType: 'community',
+      claimType: 'community_forest_rights',
+      description: 'Community forest rights for traditional forest management and conservation.',
+      supportingDocuments: [],
+      status: 'under_review',
+      priority: 'high',
+      submittedAt: new Date('2024-01-15'),
+      reviewedBy: 'Forest Revenue Officer'
+    }
+  ]);
+  const [photos] = useState([
+    {
+      id: '1',
+      url: '/1.jpg',
+      title: 'Forest Conservation Initiative',
+      description: 'Community-led forest protection programs in action',
+      uploadedBy: 'Government Admin',
+      uploadedAt: new Date().toISOString()
+    },
+    {
+      id: '2',
+      url: '/2.jpg',
+      title: 'Rights Recognition Ceremony',
+      description: 'Celebrating successful forest rights recognition',
+      uploadedBy: 'Government Admin',
+      uploadedAt: new Date().toISOString()
+    },
+    {
+      id: '3',
+      url: '/3.jpg',
+      title: 'Community Forest Management',
+      description: 'Local communities managing their forest resources',
+      uploadedBy: 'Government Admin',
+      uploadedAt: new Date().toISOString()
+    },
+    {
+      id: '4',
+      url: '/4.jpeg',
+      title: 'Forest Protection Program',
+      description: 'Government initiatives for forest conservation',
+      uploadedBy: 'Government Admin',
+      uploadedAt: new Date().toISOString()
+    },
+    {
+      id: '5',
+      url: '/ministry-of-tribal-affairs.png',
+      title: 'Ministry of Tribal Affairs',
+      description: 'Official government department for tribal welfare',
+      uploadedBy: 'Government Admin',
+      uploadedAt: new Date().toISOString()
+    }
+  ]);
   const [complaintForm, setComplaintForm] = useState({
     village: '',
     issue: '',
@@ -79,9 +162,19 @@ const LocalDashboard: React.FC = () => {
   const navigate = useNavigate();
   const longPressTimer = useRef<number | null>(null);
   const GOV_PASSCODE = (import.meta as any)?.env?.VITE_GOV_PASSCODE || 'Hackathon';
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, userPermissions } = useAuth();
   // Added: limitedMode for anonymous users
   const limitedMode = !currentUser;
+
+  // Sync active tab from query param (?tab=map, etc.)
+  const location = useLocation();
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab');
+    if (tabParam && ['dashboard','map','alerts','complaints','fra-applications','role-dashboard','analytics'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [location.search]);
 
   const handleVillageSelect = (village: Village) => {
     setSelectedVillage(village);
@@ -135,6 +228,34 @@ const LocalDashboard: React.FC = () => {
     }
   };
 
+  // FRA Application handlers
+  const handleSubmitFRAApplication = (application: FRAApplication) => {
+    setFraApplications([application, ...fraApplications]);
+    setShowFRAForm(false);
+  };
+
+  const handleEditFRAApplication = (application: FRAApplication) => {
+    // For now, just close the form - in a real app, you'd open an edit form
+    console.log('Edit FRA application:', application);
+  };
+
+  const handleDeleteFRAApplication = (applicationId: string) => {
+    setFraApplications(fraApplications.filter(app => app.id !== applicationId));
+  };
+
+  const handleStatusChangeFRAApplication = (applicationId: string, status: FRAApplication['status'], notes?: string) => {
+    setFraApplications(fraApplications.map(app => 
+      app.id === applicationId 
+        ? { 
+            ...app, 
+            status, 
+            reviewNotes: notes,
+            reviewedBy: currentUser?.displayName || 'System'
+          }
+        : app
+    ));
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'approved': return 'bg-green-100 text-green-800 border-green-200';
@@ -158,17 +279,22 @@ const LocalDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col" id="top">
-      {/* Header with Sign In button */}
-      <Header 
-        activeTab={activeTab} 
-        onTabChange={setActiveTab}
-        onToggleControlPanel={isMobile ? undefined : () => setIsControlPanelOpen(!isControlPanelOpen)}
-        isControlPanelOpen={isControlPanelOpen}
-      />
+      {/* Header removed; GovHeader is provided by GovLayout */}
 
+      {/* Photo Slider - Only show on Home/Dashboard tab */}
+      {activeTab === 'dashboard' && (
+        <div className="w-full px-4 py-4">
+          <PhotoSlider
+            photos={photos}
+            isGovernmentUser={false}
+            autoPlay={true}
+            slideDelay={3000}
+          />
+        </div>
+      )}
 
       {/* Main Content */}
-      <div className="flex flex-1 relative" style={{ minHeight: '500px' }}>
+      <div className="flex flex-1 relative">
         {/* Mobile Control Panel Toggle */}
         {isMobile && !selectedForest && (
           <div className="fixed right-4 bottom-24 z-50">
@@ -239,10 +365,14 @@ const LocalDashboard: React.FC = () => {
             </div>
             
             {/* Map or Forest Content */}
-            <div className="flex-1">
+            <div className="flex-1" style={{ minHeight: 'calc(100vh - var(--nav-height))' }}>
               {!selectedForest ? (
                 <div className="h-full p-2 sm:p-4">
                   <MapView onVillageSelect={handleVillageSelect} selectedFilters={filters} userType="local" limitedMode={limitedMode} />
+                  {/* 3D Groundwater visualization directly under the map */}
+                  <div className="mt-4">
+                    <Groundwater3D state={filters.state === 'all-states' ? 'All' : (filters.state as string)} />
+                  </div>
                 </div>
               ) : (
                 <div className="h-full">
@@ -489,6 +619,53 @@ const LocalDashboard: React.FC = () => {
           </div>
         )}
 
+        {/* FRA Applications View */}
+        {activeTab === 'fra-applications' && (
+          <div className="flex-1 p-4">
+            <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground mb-2">FRA Applications</h2>
+                <p className="text-muted-foreground">Submit and track your Forest Rights Act applications</p>
+              </div>
+              {userPermissions.canSubmitFRAApplications && (
+                <Button 
+                  onClick={() => setShowFRAForm(true)}
+                  className="btn-primary w-full sm:w-auto"
+                >
+                  <FileCheck className="w-4 h-4 mr-2" />
+                  New FRA Application
+                </Button>
+              )}
+            </div>
+            
+            {/* FRA Application Form Modal */}
+            {showFRAForm && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+                <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                  <FRAApplicationForm
+                    onClose={() => setShowFRAForm(false)}
+                    onSubmit={handleSubmitFRAApplication}
+                  />
+                </div>
+              </div>
+            )}
+            
+            <FRAApplicationList
+              applications={fraApplications}
+              onEdit={handleEditFRAApplication}
+              onDelete={handleDeleteFRAApplication}
+              onStatusChange={handleStatusChangeFRAApplication}
+            />
+          </div>
+        )}
+
+        {/* Role-Specific Dashboard */}
+        {activeTab === 'role-dashboard' && (
+          <div className="flex-1 p-4">
+            <RoleSpecificDashboard />
+          </div>
+        )}
+
         {/* Analytics View */}
         {activeTab === 'analytics' && (
           <div className="flex-1 p-4">
@@ -554,12 +731,15 @@ const LocalDashboard: React.FC = () => {
         limitedMode={limitedMode}
       />
 
-      {/* FAQ and Contact below the main dashboard */}
-      <FAQSection />
-      <ContactSection />
+      {/* FAQ and Contact below the main dashboard - Only show on Home tab */}
+      {activeTab === 'dashboard' && (
+        <>
+          <FAQSection />
+          <ContactSection />
+        </>
+      )}
 
-      {/* Global footer */}
-      <Footer />
+      {/* Footer removed from local user home */}
     </div>
   );
 };

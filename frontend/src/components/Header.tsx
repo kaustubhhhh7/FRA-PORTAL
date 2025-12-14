@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { MapPin, BarChart3, Grid3X3, Menu, X, LogIn, LogOut, User, Bell, ChevronDown, Mail, Shield, Calendar } from 'lucide-react';
+import { MapPin, BarChart3, Grid3X3, Menu, X, LogIn, LogOut, User, Bell, ChevronDown, Mail, Shield, Calendar, FileText, MessageSquare, Settings, Brain } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -19,23 +20,172 @@ const Header: React.FC<HeaderProps> = ({
   isControlPanelOpen = false 
 }) => {
   const isMobile = useIsMobile();
+  const { t, i18n } = useTranslation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = React.useState(false);
   const [isLoggingOut, setIsLoggingOut] = React.useState(false);
-  const { currentUser, logout, userRole } = useAuth();
+  const { currentUser, logout, userRole, userPermissions } = useAuth();
   const navigate = useNavigate();
   const desktopProfileDropdownRef = useRef<HTMLDivElement>(null);
   const mobileProfileDropdownRef = useRef<HTMLDivElement>(null);
 
-  const tabs = [
-    { id: 'dashboard', label: 'Home', icon: Grid3X3 },
-    { id: 'map', label: 'Map', icon: MapPin },
-    { id: 'alerts', label: 'Alerts', icon: Bell },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 }
-  ];
+  // Role-based tabs
+  const getTabs = () => {
+    const baseTabs = [
+      { id: 'dashboard', label: t('tabs.home'), icon: Grid3X3 },
+    ];
+
+    if (userPermissions.canAccessMap) {
+      baseTabs.push({ id: 'map', label: t('tabs.map'), icon: MapPin });
+    }
+
+    // Add role-specific tabs
+    if (userPermissions.canViewAnalytics) {
+      baseTabs.push({ id: 'analytics', label: t('tabs.analytics'), icon: BarChart3 });
+    }
+
+    if (userPermissions.canSubmitFRAApplications) {
+      baseTabs.push({ id: 'fra-applications', label: t('tabs.fraApplications'), icon: FileText });
+    }
+
+    // Complaints only for community-facing roles
+    if (userRole === 'normal' || userRole === 'ngo') {
+      baseTabs.push({ id: 'complaints', label: t('tabs.complaints'), icon: MessageSquare });
+    }
+
+    // Add alerts tab only for roles that can manage/view alerts per permissions
+    if (userPermissions.canManageAlerts) {
+      baseTabs.push({ id: 'alerts', label: t('tabs.alerts'), icon: Bell });
+    }
+
+    // AI Insights for data-heavy admin roles
+    if (userRole === 'government' || userRole === 'ministry_tribal' || userRole === 'forest_revenue') {
+      baseTabs.push({ id: 'ai-insights', label: t('tabs.aiInsights'), icon: Brain });
+    }
+
+    // Add role-specific dashboard tab for all authenticated users
+    if (userRole) {
+      baseTabs.push({ id: 'role-dashboard', label: t('tabs.myRole'), icon: Settings });
+    }
+
+    return baseTabs;
+  };
+
+  const tabs = getTabs();
 
   const handleTabChange = (tabId: string) => {
     onTabChange(tabId);
+
+    // Route to appropriate pages for key tabs
+    if (tabId === 'dashboard') {
+      // Send users to their role home views
+      switch (userRole) {
+        case 'government':
+          navigate('/government-dashboard');
+          break;
+        case 'ministry_tribal':
+          navigate('/tribal-dashboard');
+          break;
+        case 'welfare_dept':
+          navigate('/welfare-dashboard');
+          break;
+        case 'forest_revenue':
+          navigate('/forest-revenue-dashboard');
+          break;
+        case 'planning_develop':
+          navigate('/planning-development-dashboard');
+          break;
+        case 'ngo':
+          navigate('/ngo-dashboard');
+          break;
+        case 'normal':
+        default:
+          // Local/anonymous users have a dedicated local dashboard
+          navigate('/local-dashboard?tab=dashboard');
+      }
+    }
+
+    if (tabId === 'role-dashboard') {
+      switch (userRole) {
+        case 'government':
+          navigate('/government-dashboard');
+          break;
+        case 'ministry_tribal':
+          navigate('/tribal-dashboard');
+          break;
+        case 'welfare_dept':
+          navigate('/welfare-dashboard');
+          break;
+        case 'forest_revenue':
+          navigate('/forest-revenue-dashboard');
+          break;
+        case 'planning_develop':
+          navigate('/planning-development-dashboard');
+          break;
+        case 'ngo':
+          navigate('/ngo-dashboard');
+          break;
+        case 'normal':
+        default:
+          navigate('/local-dashboard');
+      }
+    }
+
+    // Map routing should open the Map tab of the current experience
+    if (tabId === 'map') {
+      switch (userRole) {
+        case 'government':
+          navigate('/government-dashboard');
+          break;
+        case 'ministry_tribal':
+          navigate('/tribal-dashboard');
+          break;
+        case 'welfare_dept':
+          navigate('/welfare-dashboard');
+          break;
+        case 'forest_revenue':
+          navigate('/forest-revenue-dashboard');
+          break;
+        case 'planning_develop':
+          navigate('/planning-development-dashboard');
+          break;
+        case 'ngo':
+          navigate('/ngo-dashboard');
+          break;
+        case 'normal':
+        default:
+          // For unauthenticated and normal users, open local dashboard map tab
+          navigate('/local-dashboard?tab=map');
+      }
+    }
+
+    // Feature tabs should open the role-specific dashboards where those sections exist
+    if (tabId === 'analytics' || tabId === 'fra-applications' || tabId === 'alerts' || tabId === 'complaints' || tabId === 'ai-insights') {
+      switch (userRole) {
+        case 'government':
+          navigate('/government-dashboard');
+          break;
+        case 'ministry_tribal':
+          navigate('/tribal-dashboard');
+          break;
+        case 'welfare_dept':
+          navigate('/welfare-dashboard');
+          break;
+        case 'forest_revenue':
+          navigate('/forest-revenue-dashboard');
+          break;
+        case 'planning_develop':
+          navigate('/planning-development-dashboard');
+          break;
+        case 'ngo':
+          navigate('/ngo-dashboard');
+          break;
+        case 'normal':
+        default:
+          navigate('/local-dashboard');
+      }
+    }
+
     if (isMobile) {
       setIsMobileMenuOpen(false);
     }
@@ -109,42 +259,60 @@ const Header: React.FC<HeaderProps> = ({
   }, [isProfileDropdownOpen]);
 
   return (
-    <header className="bg-dashboard-nav text-dashboard-nav-foreground shadow-lg border-b">
-      <div className="container mx-auto px-4 sm:px-6 py-4">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-dashboard-nav text-dashboard-nav-foreground shadow-lg border-b" style={{ borderColor: 'var(--lang-accent)' }}>
+      <div className="container mx-auto px-4 sm:px-6 py-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2 sm:space-x-4">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-lg flex items-center justify-center border-2 border-white">
-                <MapPin className="w-4 h-4 sm:w-6 sm:h-6 text-black" />
-              </div>
+              {/* Left logo image (served from /frontend/public/1.png) */}
+              <img
+                src="/1.png"
+                alt="Government of India"
+                className="h-8 sm:h-10 w-auto rounded bg-white p-1 border-2"
+                style={{ borderColor: 'var(--lang-accent)' }}
+                onError={(e) => {
+                  // Fallback: hide broken image and keep layout
+                  const target = e.currentTarget as HTMLImageElement;
+                  target.style.display = 'none';
+                }}
+              />
               <div>
-                <h1 className="text-lg sm:text-2xl font-bold">FRA Portal</h1>
-                <p className="text-xs sm:text-sm opacity-90 hidden sm:block">Forest Rights Administration</p>
+                <h1 className="text-lg sm:text-2xl font-bold">{t('app.title')}</h1>
+                <p className="text-xs sm:text-sm opacity-90 hidden sm:block">{t('app.subtitle')}</p>
               </div>
             </div>
           </div>
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
-            <nav className="flex items-center space-x-1">
+            {/* Language selector */}
+            <select
+              aria-label={t('lang.label')}
+              className="mr-3 bg-white/10 text-white border-white/40 rounded px-2 py-1 text-sm"
+              value={i18n.language}
+              onChange={(e) => { i18n.changeLanguage(e.target.value); localStorage.setItem('app_language', e.target.value); }}
+            >
+              <option className="text-black" value="en">{t('lang.english')}</option>
+              <option className="text-black" value="hi">{t('lang.hindi')}</option>
+              <option className="text-black" value="te">{t('lang.telugu')}</option>
+              <option className="text-black" value="or">{t('lang.odia')}</option>
+              <option className="text-black" value="bn">{t('lang.bengali')}</option>
+            </select>
+            <nav className="flex items-center gap-5">
               {tabs.map((tab) => {
-                const Icon = tab.icon;
                 return (
                   <Button
                     key={tab.id}
-                    variant={activeTab === tab.id ? "secondary" : "outline"}
-                    onClick={() => onTabChange(tab.id)}
-                    className={`flex items-center space-x-2 font-medium ${
-                      activeTab === tab.id 
-                        ? 'bg-white text-dashboard-nav shadow-md border-white' 
-                        : 'border-white/30 text-white hover:bg-white/20 bg-white/5'
+                    variant="ghost"
+                    onClick={() => handleTabChange(tab.id)}
+                    className={`group flex items-center font-medium text-white text-sm px-4 py-1.5 transition-colors hover:bg-transparent ${
+                      activeTab === tab.id ? '' : ''
                     }`}
                   >
-                    <Icon className={`w-4 h-4 ${
-                      activeTab === tab.id ? 'text-dashboard-nav' : 'text-white'
-                    }`} />
                     <span className={`${
-                      activeTab === tab.id ? 'mobile-nav-active' : 'mobile-nav-text'
+                      activeTab === tab.id 
+                        ? 'text-white border-b-2 border-white pb-0.5' 
+                        : 'text-white/70 group-hover:text-white transition-colors'
                     }`}>{tab.label}</span>
                   </Button>
                 );
@@ -152,14 +320,14 @@ const Header: React.FC<HeaderProps> = ({
             </nav>
             
             {/* Authentication Button - Positioned at the far right */}
-            <div className="ml-6 pl-4 border-l border-white/20">
+            <div className="ml-6 pl-4 border-l border-white/10">
               {currentUser ? (
                 <div className="relative" ref={desktopProfileDropdownRef}>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={toggleProfileDropdown}
-                    className="border-white/40 text-white hover:bg-white/20 bg-white/10 flex items-center space-x-2"
+                    className="border-transparent text-white hover:bg-white/15 bg-transparent flex items-center space-x-2 rounded-full px-3 py-1"
                   >
                     <User className="w-4 h-4" />
                     <span className="text-sm font-medium">
@@ -193,7 +361,7 @@ const Header: React.FC<HeaderProps> = ({
                           {userRole === 'government' && (
                             <div className="flex items-center space-x-3 text-sm text-gray-600">
                               <Shield className="w-4 h-4 text-green-600" />
-                              <span className="text-green-600 font-medium">Government Administrator</span>
+                              <span className="text-green-600 font-medium">{t('auth.govAdmin')}</span>
                             </div>
                           )}
                           
@@ -214,12 +382,12 @@ const Header: React.FC<HeaderProps> = ({
                             {isLoggingOut ? (
                               <>
                                 <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-red-500 border-t-transparent" />
-                                Logging out...
+                                {t('auth.loggingOut')}
                               </>
                             ) : (
                               <>
                                 <LogOut className="w-4 h-4 mr-2" />
-                                Logout
+                                {t('auth.logout')}
                               </>
                             )}
                           </Button>
@@ -236,7 +404,7 @@ const Header: React.FC<HeaderProps> = ({
                   className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white bg-transparent transition-all duration-200 hover:shadow-lg hover:scale-105"
                 >
                   <LogIn className="w-4 h-4 mr-2" />
-                  Sign In
+                  {t('auth.signIn')}
                 </Button>
               )}
             </div>
@@ -267,7 +435,7 @@ const Header: React.FC<HeaderProps> = ({
                   className="border-white/40 text-white hover:bg-white/20 bg-white/10 touch-target flex items-center space-x-1"
                 >
                   <User className="w-4 h-4" />
-                  <span className="text-xs font-medium hidden sm:inline">
+                <span className="text-xs font-medium hidden sm:inline">
                     {currentUser.displayName || currentUser.email?.split('@')[0] || 'User'}
                   </span>
                   <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
@@ -314,12 +482,12 @@ const Header: React.FC<HeaderProps> = ({
                           {isLoggingOut ? (
                             <>
                               <div className="w-3 h-3 mr-1 animate-spin rounded-full border-2 border-red-500 border-t-transparent" />
-                              Logging out...
+                              {t('auth.loggingOut')}
                             </>
                           ) : (
                             <>
                               <LogOut className="w-3 h-3 mr-1" />
-                              Logout
+                              {t('auth.logout')}
                             </>
                           )}
                         </Button>
@@ -353,26 +521,21 @@ const Header: React.FC<HeaderProps> = ({
 
         {/* Mobile Navigation Menu */}
         {isMobile && isMobileMenuOpen && (
-          <div className="mt-4 pt-4 border-t border-white/20">
+          <div className="mt-3 pt-3 border-t border-white/20">
             <nav className="flex flex-col space-y-2">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <Button
                     key={tab.id}
-                    variant={activeTab === tab.id ? "secondary" : "outline"}
+                    variant="ghost"
                     onClick={() => handleTabChange(tab.id)}
-                    className={`w-full justify-start font-medium ${
-                      activeTab === tab.id 
-                        ? 'bg-white text-dashboard-nav shadow-md border-white' 
-                        : 'border-white/30 text-white hover:bg-white/20 bg-white/5'
-                    }`}
+                    className="w-full justify-start font-medium text-white hover:bg-transparent"
                   >
-                    <Icon className={`w-4 h-4 mr-2 ${
-                      activeTab === tab.id ? 'text-dashboard-nav' : 'text-white'
-                    }`} />
                     <span className={`${
-                      activeTab === tab.id ? 'mobile-nav-active' : 'mobile-nav-text'
+                      activeTab === tab.id 
+                        ? 'text-white border-b-2 border-white pb-0.5' 
+                        : 'text-white/80'
                     }`}>{tab.label}</span>
                   </Button>
                 );
@@ -441,7 +604,7 @@ const Header: React.FC<HeaderProps> = ({
                     className="w-full justify-start border-red-500 text-red-500 hover:bg-red-500 hover:text-white bg-transparent transition-all duration-200 hover:shadow-lg"
                   >
                     <LogIn className="w-4 h-4 mr-2" />
-                    Sign In
+                    {t('auth.signIn')}
                   </Button>
                 )}
               </div>

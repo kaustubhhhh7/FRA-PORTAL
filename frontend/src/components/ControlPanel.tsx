@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -19,10 +20,15 @@ interface ControlPanelProps {
   onFilterChange: (filters: any) => void;
   onClose?: () => void;
   isMobile?: boolean;
+  showForests?: boolean;
+  onToggleForests?: (show: boolean) => void;
+  mapMode?: 'both' | 'forests' | 'fra';
+  onMapModeChange?: (mode: 'both' | 'forests' | 'fra') => void;
 }
 
-const ControlPanel: React.FC<ControlPanelProps> = ({ selectedFilters, onFilterChange, onClose, isMobile = false }) => {
+const ControlPanel: React.FC<ControlPanelProps> = ({ selectedFilters, onFilterChange, onClose, isMobile = false, showForests = false, onToggleForests, mapMode = 'both', onMapModeChange }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const { t } = useTranslation();
   const [schemes, setSchemes] = useState<SchemeCard[] | null>(null);
 
   React.useEffect(() => {
@@ -51,7 +57,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ selectedFilters, onFilterCh
       {/* Mobile Header */}
       {isMobile && (
         <div className="sticky top-0 bg-dashboard-sidebar border-b p-4 flex items-center justify-between z-10">
-          <h2 className="text-lg font-semibold">Control Panel</h2>
+          <h2 className="text-lg font-semibold">{t('filters.controlPanel')}</h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="w-4 h-4" />
           </Button>
@@ -60,10 +66,10 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ selectedFilters, onFilterCh
       
       <Tabs defaultValue="filters" className="w-full">
         <TabsList className={`grid w-full grid-cols-4 bg-card ${isMobile ? 'm-2 mb-2' : 'm-4 mb-2'}`}>
-          <TabsTrigger value="filters" className="text-xs">Filters</TabsTrigger>
-          <TabsTrigger value="stats" className="text-xs">Stats</TabsTrigger>
-          <TabsTrigger value="recommendations" className="text-xs">Schemes</TabsTrigger>
-          <TabsTrigger value="documents" className="text-xs">Docs</TabsTrigger>
+          <TabsTrigger value="filters" className="text-xs">{t('filters.tab')}</TabsTrigger>
+          <TabsTrigger value="stats" className="text-xs">{t('filters.statsTab')}</TabsTrigger>
+          <TabsTrigger value="recommendations" className="text-xs">{t('filters.schemesTab')}</TabsTrigger>
+          <TabsTrigger value="documents" className="text-xs">{t('filters.docsTab')}</TabsTrigger>
         </TabsList>
 
         <div className={`${isMobile ? 'px-2 pb-4' : 'px-4 pb-4'}`}>
@@ -72,14 +78,14 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ selectedFilters, onFilterCh
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center">
                   <Filter className="w-4 h-4 mr-2" />
-                  Search & Filter
+                  {t('filters.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search villages..."
+                    placeholder={t('filters.search')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -88,16 +94,16 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ selectedFilters, onFilterCh
                 
                 <div className="space-y-3">
                   <div>
-                    <label className="text-xs font-medium text-muted-foreground mb-1 block">State</label>
+                    <label className="text-xs font-medium text-muted-foreground mb-1 block">{t('filters.state')}</label>
                     <Select 
                       value={selectedFilters.state} 
                       onValueChange={(value) => onFilterChange({ ...selectedFilters, state: value, district: '' })}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select State" />
+                        <SelectValue placeholder={t('filters.selectState')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all-states">All States</SelectItem>
+                        <SelectItem value="all-states">{t('filters.allStates')}</SelectItem>
                         {mockStates.map((state) => {
                           const isHighlightedState = ['Madhya Pradesh', 'Odisha', 'Telangana', 'Tripura'].includes(state.name);
                           return (
@@ -115,17 +121,17 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ selectedFilters, onFilterCh
                   </div>
 
                   <div>
-                    <label className="text-xs font-medium text-muted-foreground mb-1 block">District</label>
+                    <label className="text-xs font-medium text-muted-foreground mb-1 block">{t('filters.district')}</label>
                     <Select 
                       value={selectedFilters.district}
                       onValueChange={(value) => onFilterChange({ ...selectedFilters, district: value })}
                       disabled={!selectedFilters.state}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select District" />
+                        <SelectValue placeholder={t('filters.selectDistrict')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all-districts">All Districts</SelectItem>
+                        <SelectItem value="all-districts">{t('filters.allDistricts')}</SelectItem>
                         {selectedFilters.state && mockStates
                           .find(s => s.name === selectedFilters.state)?.districts
                           .map((district) => (
@@ -138,19 +144,19 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ selectedFilters, onFilterCh
                   </div>
 
                   <div>
-                    <label className="text-xs font-medium text-muted-foreground mb-1 block">Status</label>
+                    <label className="text-xs font-medium text-muted-foreground mb-1 block">{t('filters.status')}</label>
                     <Select 
                       value={selectedFilters.status}
                       onValueChange={(value) => onFilterChange({ ...selectedFilters, status: value })}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="All Status" />
+                        <SelectValue placeholder={t('filters.allStatus')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all-status">All Status</SelectItem>
-                        <SelectItem value="Approved">Approved</SelectItem>
-                        <SelectItem value="Pending">Pending</SelectItem>
-                        <SelectItem value="Rejected">Rejected</SelectItem>
+                        <SelectItem value="all-status">{t('filters.allStatus')}</SelectItem>
+                        <SelectItem value="Approved">{t('status.approved')}</SelectItem>
+                        <SelectItem value="Pending">{t('status.pending')}</SelectItem>
+                        <SelectItem value="Rejected">{t('status.rejected')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -161,8 +167,63 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ selectedFilters, onFilterCh
                     className="w-full"
                     size="sm"
                   >
-                    Clear Filters
+                    {t('filters.clear')}
                   </Button>
+                  
+                  {onToggleForests && (
+                    <div className="pt-3 border-t">
+                      <label className="flex items-center space-x-2 text-xs">
+                        <input
+                          type="checkbox"
+                          checked={showForests}
+                          onChange={(e) => onToggleForests(e.target.checked)}
+                          className="rounded"
+                        />
+                        <span>{t('filters.showForests')}</span>
+                      </label>
+                    </div>
+                  )}
+                  
+                  {onMapModeChange && (
+                    <div className="pt-3 border-t">
+                      <label className="text-xs font-medium text-muted-foreground mb-2 block">{t('filters.mapMode')}</label>
+                      <div className="space-y-2">
+                        <label className="flex items-center space-x-2 text-xs">
+                          <input
+                            type="radio"
+                            name="mapMode"
+                            value="both"
+                            checked={mapMode === 'both'}
+                            onChange={(e) => onMapModeChange(e.target.value as 'both' | 'forests' | 'fra')}
+                            className="rounded"
+                          />
+                          <span>{t('filters.modeBoth')}</span>
+                        </label>
+                        <label className="flex items-center space-x-2 text-xs">
+                          <input
+                            type="radio"
+                            name="mapMode"
+                            value="fra"
+                            checked={mapMode === 'fra'}
+                            onChange={(e) => onMapModeChange(e.target.value as 'both' | 'forests' | 'fra')}
+                            className="rounded"
+                          />
+                          <span>{t('filters.modeFRA')}</span>
+                        </label>
+                        <label className="flex items-center space-x-2 text-xs">
+                          <input
+                            type="radio"
+                            name="mapMode"
+                            value="forests"
+                            checked={mapMode === 'forests'}
+                            onChange={(e) => onMapModeChange(e.target.value as 'both' | 'forests' | 'fra')}
+                            className="rounded"
+                          />
+                          <span>{t('filters.modeForests')}</span>
+                        </label>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

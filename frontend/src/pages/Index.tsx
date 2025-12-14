@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Header from '@/components/Header';
+import GovLayout from '@/components/GovLayout';
 import MapView from '@/components/MapView';
 import ControlPanel from '@/components/ControlPanel';
 import DetailsDrawer from '@/components/DetailsDrawer';
@@ -10,13 +10,17 @@ import { Button } from '@/components/ui/button';
 import { LogOut, User } from 'lucide-react';
 import FAQSection from '@/components/FAQSection';
 import ContactSection from '@/components/ContactSection';
-import Footer from '@/components/Footer';
+// Footer handled by GovLayout
+import Groundwater3D from '@/components/Groundwater3D';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedVillage, setSelectedVillage] = useState<Village | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isControlPanelOpen, setIsControlPanelOpen] = useState(false);
+  const [showForests, setShowForests] = useState(true);
+  const [mapMode, setMapMode] = useState<'both' | 'forests' | 'fra'>('both');
+  const [selectedState, setSelectedState] = useState<string>('All');
   const [filters, setFilters] = useState({
     state: 'all-states',
     district: 'all-districts',
@@ -52,13 +56,8 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col h-screen" id="top">
-      <Header 
-        activeTab={activeTab} 
-        onTabChange={setActiveTab}
-        onToggleControlPanel={isMobile ? undefined : () => setIsControlPanelOpen(!isControlPanelOpen)}
-        isControlPanelOpen={isControlPanelOpen}
-      />
+    <GovLayout>
+      <div className="min-h-screen bg-background flex flex-col h-screen" id="top">
       
       {/* User Info and Logout */}
       <div className="bg-white border-b px-4 py-2 flex justify-between items-center">
@@ -79,10 +78,27 @@ const Index = () => {
         </Button>
       </div>
       
-      <div className="flex flex-1 relative" style={{ minHeight: '500px' }}>
+      <div className="flex flex-1 relative" style={{ minHeight: 'calc(100vh - var(--nav-height))' }}>
         {/* Main Content Area */}
-        <div className={`flex-1 p-2 sm:p-4 ${isMobile ? 'pr-2' : 'pr-2'}`}>
-          <MapView onVillageSelect={handleVillageSelect} selectedFilters={filters} />
+        <div className={`flex-1 p-2 sm:p-4 ${isMobile ? 'pr-2' : 'pr-2'}`} style={{ height: '100%' }}>
+          <MapView 
+            onVillageSelect={handleVillageSelect} 
+            selectedFilters={filters}
+            showForests={showForests}
+            mapMode={mapMode}
+            onStateSelect={(stateName) => {
+              setSelectedState(stateName);
+              // Scroll to 3D section smoothly
+              const el = document.getElementById('groundwater-3d');
+              if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }}
+            onForestSelect={(forest) => {
+              console.log('Forest selected:', forest);
+              // You can add forest selection handling here
+            }}
+          />
         </div>
         
         {/* Control Panel - Desktop: Sidebar, Mobile: Overlay */}
@@ -98,6 +114,10 @@ const Index = () => {
                 onFilterChange={setFilters}
                 onClose={handleCloseControlPanel}
                 isMobile={true}
+                showForests={showForests}
+                onToggleForests={setShowForests}
+                mapMode={mapMode}
+                onMapModeChange={setMapMode}
               />
             </div>
           </div>
@@ -107,6 +127,10 @@ const Index = () => {
               selectedFilters={filters}
               onFilterChange={setFilters}
               isMobile={false}
+              showForests={showForests}
+              onToggleForests={setShowForests}
+              mapMode={mapMode}
+              onMapModeChange={setMapMode}
             />
           </div>
         )}
@@ -120,13 +144,17 @@ const Index = () => {
         />
       </div>
 
+      {/* 3D Groundwater visualization */}
+      <section id="groundwater-3d" className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Groundwater3D state={selectedState} />
+      </section>
+
       {/* FAQ and Contact sections below the map */}
       <FAQSection />
       <ContactSection />
 
-      {/* Global footer */}
-      <Footer />
-    </div>
+      </div>
+    </GovLayout>
   );
 };
 

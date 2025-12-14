@@ -6,7 +6,7 @@ interface ProtectedRouteProps {
   children: React.ReactNode;
   // Added requiredRole to enforce role-based access for sensitive routes like government dashboard
   // NOTE: Keeping default behavior intact if requiredRole is not provided
-  requiredRole?: 'government' | 'local';
+  requiredRole?: 'government' | 'local' | 'ministry_tribal' | 'welfare_dept' | 'forest_revenue' | 'planning_develop' | 'ngo' | 'normal';
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole }) => {
@@ -20,8 +20,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
 
   // If a role is required, ensure it matches the signed-in user's role
   if (requiredRole && userRole !== requiredRole) {
-    // Redirect mismatch users to a safe default
-    return <Navigate to={userRole === 'local' ? '/local-dashboard' : '/'} replace />;
+    // Redirect mismatch users to appropriate dashboard based on their role
+    const isGovernmentRole = userRole === 'government' || userRole === 'ministry_tribal' || 
+                            userRole === 'welfare_dept' || userRole === 'forest_revenue' || 
+                            userRole === 'planning_develop';
+    
+    if (isGovernmentRole) {
+      return <Navigate to="/government-dashboard" replace />;
+    } else {
+      return <Navigate to="/local-dashboard" replace />;
+    }
   }
 
   return <>{children}</>;

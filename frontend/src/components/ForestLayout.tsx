@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import { mockForestAreas, ForestArea } from '@/data/mockData';
 import { loadRealForestAreas } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -101,6 +102,7 @@ const ForestLayout: React.FC<ForestLayoutProps> = ({
   userType = 'government',
   onForestSelect 
 }) => {
+  const navigate = useNavigate();
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
@@ -144,10 +146,12 @@ const ForestLayout: React.FC<ForestLayoutProps> = ({
         style: {
           color: '#dc2626',
           weight: 3,
-          opacity: 0.8,
+          opacity: 0.85,
           fillColor: 'transparent',
           fillOpacity: 0,
-          dashArray: '5, 5'
+          dashArray: '6 4',
+          lineJoin: 'round',
+          lineCap: 'round'
         },
         onEachFeature: (feature, layer) => {
           const stateName = feature.properties?.NAME_1 || feature.properties?.name || 'State';
@@ -174,11 +178,13 @@ const ForestLayout: React.FC<ForestLayoutProps> = ({
       const geoJsonLayer = L.geoJSON(geoJsonData, {
         style: {
           color: '#10b981',
-          weight: 1,
-          opacity: 0.6,
+          weight: 1.5,
+          opacity: 0.9,
           fillColor: 'transparent',
           fillOpacity: 0,
-          dashArray: '3, 3'
+          dashArray: '3 3',
+          lineJoin: 'round',
+          lineCap: 'round'
         },
         onEachFeature: (feature, layer) => {
           const districtName = feature.properties?.NAME_2 || 'District';
@@ -318,6 +324,9 @@ const ForestLayout: React.FC<ForestLayoutProps> = ({
         setSelectedForest(forest);
         setShowDetails(true);
         if (onForestSelect) onForestSelect(forest);
+        if (forest.name.toLowerCase().includes('satkosia')) {
+          navigate('/satkosia');
+        }
       };
       popupContent.appendChild(button);
       
@@ -591,7 +600,11 @@ const ForestLayout: React.FC<ForestLayoutProps> = ({
               <p className="text-sm text-gray-700 leading-relaxed mt-5">{selectedForest.description}</p>
 
               <div className="mt-5">
-                <Button className="w-full">View Details</Button>
+                <Button className="w-full" onClick={() => {
+                  if (selectedForest && selectedForest.name.toLowerCase().includes('satkosia')) {
+                    navigate('/satkosia');
+                  }
+                }}>View Details</Button>
               </div>
             </div>
           </div>
