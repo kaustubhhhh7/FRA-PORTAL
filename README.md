@@ -6,58 +6,6 @@ A comprehensive platform for tracking, visualizing, and managing Forest Rights A
 
 The FRA Portal is a sophisticated web application designed to streamline forest rights management across India. It provides interactive mapping, real-time data visualization, and comprehensive administrative tools for managing Forest Rights Act claims at both government and local community levels.
 
-## 🧭 Use Case Diagram
-
-```mermaid
-flowchart LR
-    %% Actors
-    A["👤 Local Community User\n(Claimant / Village Leader)"]
-    G["👤 Government Official\n(Admin/Reviewer)"]
-    N["👤 NGO / Department User\n(Restricted Access)"]
-
-    %% Systems
-    subgraph FRA Portal
-      direction LR
-      UC1((Register / Login))
-      UC2((Select Role))
-      UC3((View Map & Analytics))
-      UC4((Submit/Track FRA Application))
-      UC5((Upload & Manage Documents))
-      UC6((Receive / Manage Alerts))
-      UC7((Review & Verify Applications))
-      UC8((Generate Reports))
-      UC9((AI: Analyze Documents))
-      UC10((AI: Validate Application))
-      UC11((User Management))
-    end
-
-    %% Associations
-    A --- UC1
-    A --- UC2
-    A --- UC3
-    A --- UC4
-    A --- UC5
-    A --- UC6
-
-    G --- UC1
-    G --- UC2
-    G --- UC3
-    G --- UC6
-    G --- UC7
-    G --- UC8
-    G --- UC11
-
-    N --- UC1
-    N --- UC2
-    N --- UC3
-    N --- UC6
-
-    %% AI Services used by multiple cases
-    UC5 -. uses .- UC9
-    UC4 -. uses .- UC10
-    UC7 -. uses .- UC9
-```
-
 ## 🔄 User Flow Diagram
 
 ```mermaid
